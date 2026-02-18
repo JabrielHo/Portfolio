@@ -59,7 +59,7 @@ const markers = [
                         <h4 class="font-bold text-stone-800">{exp.data.title}</h4>
                         <p class="text-stone-500 text-sm font-medium">{exp.data.company}</p>
                       </div>
-                      <time class="font-mono text-xs text-stone-400 shrink-0 bg-stone-50 px-2 py-1 rounded-md">
+                      <time class="font-mono text-xs text-stone-400 shrink-0 bg-stone-50 px-2 py-1 rounded-md w-fit">
                         {exp.data.startDate} — {exp.data.endDate}
                       </time>
                     </div>
@@ -107,7 +107,7 @@ const markers = [
                         <h4 class="font-bold text-stone-800">{edu.data.institution}</h4>
                         <p class="text-stone-500 text-sm font-medium">{edu.data.degree}</p>
                       </div>
-                      <time class="font-mono text-xs text-stone-400 shrink-0 bg-stone-50 px-2 py-1 rounded-md">
+                      <time class="font-mono text-xs text-stone-400 shrink-0 bg-stone-50 px-2 py-1 rounded-md w-fit">
                         {edu.data.startDate} — {edu.data.endDate}
                       </time>
                     </div>
@@ -179,7 +179,8 @@ const markers = [
         rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
         rect.right <= (window.innerWidth || document.documentElement.clientWidth);
 
-      if (!isInViewport) {
+      // Only scroll on desktop where side-by-side layout exists (lg breakpoint is 1024px)
+      if (!isInViewport && window.innerWidth >= 1024) {
         card.scrollIntoView({ behavior: "smooth", block: "nearest" });
       }
     }
