@@ -6,8 +6,11 @@ const certifications = (await getCollection("certifications")).sort((a, b) => a.
 
 <section id="certifications" class="py-24">
   <div class="max-w-7xl mx-auto px-6">
-    <div class="animate-on-scroll mb-16">
-      <h3 class="text-2xl font-bold mb-6 flex items-center gap-3 text-stone-800">Certifications</h3>
+    <div class="animate-on-scroll">
+      <span class="font-mono text-xs font-medium uppercase tracking-[3px] text-stone-400 mb-2 block"
+        >Certifications</span
+      >
+      <h2 class="text-4xl font-extrabold mb-12 text-stone-800">Professional Credentials</h2>
       <div class="grid md:grid-cols-2 gap-6">
         {
           certifications.map((cert, i) => (
