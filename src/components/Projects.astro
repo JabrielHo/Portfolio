@@ -28,7 +28,13 @@ const projects = (await getCollection("projects")).sort((a, b) => a.data.order -
               </div>
             </div>
 
-            <p class="text-stone-500 text-sm leading-relaxed mb-5 flex-grow">{project.data.description}</p>
+            <div class="text-stone-500 text-sm leading-relaxed mb-5 flex-grow">
+              <ul class="list-disc pl-5 space-y-2">
+                {project.data.description.map((item: string) => (
+                  <li>{item}</li>
+                ))}
+              </ul>
+            </div>
 
             <div class="flex flex-wrap gap-1.5 mb-6">
               {project.data.tags.map((tag: string) => (
