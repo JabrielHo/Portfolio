@@ -1,0 +1,48 @@
+<section id="hero" class="relative min-h-screen flex items-center pt-[70px]">
+  <div class="max-w-5xl mx-auto px-6 py-20 w-full">
+    <div class="max-w-3xl">
+      <p class="hero-fade font-mono text-sm text-stone-400 mb-4" style="--delay: 0.2s;">Hi, I'm</p>
+
+      <h1
+        class="hero-fade text-5xl sm:text-6xl lg:text-7xl font-extrabold leading-[1.1] mb-6 text-stone-800"
+        style="--delay: 0.4s;">
+        Jabriel Ho
+      </h1>
+
+      <p
+        class="hero-fade text-xl sm:text-2xl text-stone-400 font-light leading-relaxed mb-6 max-w-2xl"
+        style="--delay: 0.6s;">
+        Software Engineering student at <span class="text-stone-700 font-medium">Singapore Management University</span>,
+        interested in full-stack development, and all things tech.
+      </p>
+
+      <div class="hero-fade space-y-4 mb-8" style="--delay: 0.8s;">
+        <p class="text-stone-500 leading-relaxed">
+          My experience spans <span class="text-stone-700 font-medium">front-end development</span>
+          with React and Vue.js, <span class="text-stone-700 font-medium">back-end development</span> with Flask, Spring Boot and Docker,
+          and <span class="text-stone-700 font-medium">cloud computing</span>
+          on AWS.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero-fade {
+    opacity: 0;
+    animation: heroFadeIn 0.6s ease forwards;
+    animation-delay: var(--delay, 0s);
+  }
+
+  @keyframes heroFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>

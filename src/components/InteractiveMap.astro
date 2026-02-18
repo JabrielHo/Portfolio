@@ -1,0 +1,109 @@
+---
+interface Marker {
+  lat: number;
+  lng: number;
+  title: string;
+  subtitle: string;
+  date: string;
+  type: "work" | "education";
+}
+
+interface Props {
+  markers: Marker[];
+}
+
+const { markers } = Astro.props;
+---
+
+<div
+  class="rounded-2xl overflow-hidden border border-stone-200 shadow-sm"
+  style="height: 500px;"
+  role="img"
+  aria-label="Interactive map showing work and education locations">
+  <div id="leaflet-map" style="height: 100%; width: 100%;"></div>
+</div>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script is:inline src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script is:inline define:vars={{ markers }}>
+  document.addEventListener("DOMContentLoaded", () => {
+    const mapEl = document.getElementById("leaflet-map");
+    if (!mapEl) return;
+
+    const map = L.map("leaflet-map", {
+      center: [1.32, 103.85],
+      zoom: 12,
+      zoomControl: true,
+      scrollWheelZoom: true,
+    });
+
+    L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
+      subdomains: "abcd",
+      maxZoom: 19,
+    }).addTo(map);
+
+    function createIcon(color) {
+      return L.divIcon({
+        className: "custom-marker",
+        html:
+          '<div style="width:14px;height:14px;background:' +
+          color +
+          ';border-radius:50%;border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.15)"></div>',
+        iconSize: [14, 14],
+        iconAnchor: [7, 7],
+        popupAnchor: [0, -10],
+      });
+    }
+
+    var workIcon = createIcon("#44403c");
+    var eduIcon = createIcon("#a8a29e");
+    var markerRefs = {};
+
+    markers.forEach(function (m) {
+      var icon = m.type === "work" ? workIcon : eduIcon;
+      var typeLabel = m.type === "work" ? "Work" : "Education";
+
+      var marker = L.marker([m.lat, m.lng], { icon: icon })
+        .addTo(map)
+        .bindPopup(
+          '<div style="font-family:Inter,sans-serif;min-width:180px">' +
+            '<span style="display:inline-block;padding:2px 8px;background:#f5f5f4;color:#57534e;font-size:10px;font-weight:600;border-radius:9999px;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px">' +
+            typeLabel +
+            "</span>" +
+            '<div style="font-weight:700;font-size:14px;color:#292524;margin-bottom:2px">' +
+            m.title +
+            "</div>" +
+            '<div style="font-size:12px;color:#78716c;margin-bottom:4px">' +
+            m.subtitle +
+            "</div>" +
+            '<div style="font-size:11px;color:#a8a29e;font-family:JetBrains Mono,monospace">' +
+            m.date +
+            "</div>" +
+            "</div>",
+          { closeButton: false },
+        );
+
+      markerRefs[m.lat + "," + m.lng] = marker;
+
+      marker.on("click", function () {
+        // Dispatch custom event for external handling
+        const event = new CustomEvent("map-marker-selected", {
+          detail: { lat: m.lat, lng: m.lng },
+        });
+        document.dispatchEvent(event);
+      });
+    });
+
+    // Listen for fly-to events from the list
+    document.addEventListener("fly-to-map", (e) => {
+      const { lat, lng } = e.detail;
+      map.flyTo([lat, lng], 15, { duration: 0.8 });
+
+      var key = lat + "," + lng;
+      if (markerRefs[key]) markerRefs[key].openPopup();
+    });
+  });
+</script>
