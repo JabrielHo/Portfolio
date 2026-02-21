@@ -10,18 +10,18 @@ const certifications = (await getCollection("certifications")).sort((a, b) => a.
       <span class="font-mono text-xs font-medium uppercase tracking-[3px] text-stone-400 mb-2 block"
         >Certifications</span
       >
-      <h2 class="text-4xl font-extrabold mb-12 text-stone-800">Professional Credentials</h2>
+      <h2 class="text-4xl font-extrabold mb-12 text-stone-800 dark:text-stone-100">Professional Credentials</h2>
       <div class="grid md:grid-cols-2 gap-6">
         {
           certifications.map((cert, i) => (
             <div class="animate-on-scroll group card flex flex-col h-full" style={`transition-delay: ${i * 100}ms`}>
               <div class="flex items-start gap-4 mb-4">
                 <div class="flex-1">
-                  <h3 class="font-bold text-stone-800 group-hover:text-stone-600 transition-colors">
+                  <h3 class="font-bold text-stone-800 dark:text-stone-100 group-hover:text-stone-600 dark:group-hover:text-stone-300 transition-colors">
                     {cert.data.title}
                   </h3>
-                  <p class="text-sm text-stone-500">{cert.data.issuer}</p>
-                  <time class="text-xs text-stone-400 font-mono mt-1 bg-stone-50 inline-block px-2 py-0.5 rounded-md">
+                  <p class="text-sm text-stone-500 dark:text-stone-400">{cert.data.issuer}</p>
+                  <time class="text-xs text-stone-400 font-mono mt-1 bg-stone-50 dark:bg-stone-700/50 inline-block px-2 py-0.5 rounded-md">
                     {cert.data.issueDate}
                     {cert.data.expiryDate && ` — ${cert.data.expiryDate}`}
                   </time>
@@ -29,16 +29,18 @@ const certifications = (await getCollection("certifications")).sort((a, b) => a.
               </div>
 
               {cert.data.description && (
-                <p class="text-stone-500 text-sm leading-relaxed mb-5 flex-grow">{cert.data.description}</p>
+                <p class="text-stone-500 dark:text-stone-400 text-sm leading-relaxed mb-5 flex-grow">
+                  {cert.data.description}
+                </p>
               )}
 
               {cert.data.link && (
-                <div class="flex items-center gap-4 pt-4 border-t border-stone-100 mt-auto">
+                <div class="flex items-center gap-4 pt-4 border-t border-stone-100 dark:border-stone-700 mt-auto">
                   <a
                     href={cert.data.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="flex items-center gap-2 text-stone-400 hover:text-stone-800 transition-colors"
+                    class="flex items-center gap-2 text-stone-400 hover:text-stone-800 dark:hover:text-stone-200 transition-colors"
                     aria-label={`View ${cert.data.title} certification`}>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"

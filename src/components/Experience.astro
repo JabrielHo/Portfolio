@@ -25,41 +25,41 @@ const markers = [
 ];
 ---
 
-<section id="experience" class="py-24 bg-stone-100/50">
+<section id="experience" class="py-24 bg-stone-100/50 dark:bg-stone-800/30">
   <div class="max-w-7xl mx-auto px-6">
     <div class="animate-on-scroll">
       <span class="font-mono text-xs font-medium uppercase tracking-[3px] text-stone-400 mb-2 block"
         >Experience & Education</span
       >
-      <h2 class="text-4xl font-extrabold mb-12 text-stone-800">Where I've worked & studied</h2>
+      <h2 class="text-4xl font-extrabold mb-12 text-stone-800 dark:text-stone-100">Where I've worked & studied</h2>
     </div>
 
     <div class="grid lg:grid-cols-5 gap-10">
       <div class="lg:col-span-3">
         <h3 class="text-sm font-semibold text-stone-400 uppercase tracking-wider mb-6">Work Experience</h3>
         <div class="relative mb-12" role="list" aria-label="Work experience timeline">
-          <div class="absolute left-3 top-2 bottom-0 w-px bg-stone-200" aria-hidden="true"></div>
+          <div class="absolute left-3 top-2 bottom-0 w-px bg-stone-200 dark:bg-stone-700" aria-hidden="true"></div>
           <div class="space-y-8">
             {
               experiences.map((exp, i) => (
                 <div class="animate-on-scroll relative pl-10" style={`transition-delay: ${i * 100}ms`} role="listitem">
                   <div
-                    class="absolute left-3 top-2 -translate-x-1/2 w-2.5 h-2.5 rounded-full bg-stone-500 border-[3px] border-stone-100"
+                    class="absolute left-3 top-2 -translate-x-1/2 w-2.5 h-2.5 rounded-full bg-stone-500 border-[3px] border-stone-100 dark:border-stone-900"
                     aria-hidden="true"
                   />
 
                   <div
-                    class="card map-card cursor-pointer group hover:bg-white hover:shadow-md transition-all duration-300"
+                    class="card map-card cursor-pointer group hover:shadow-md transition-all duration-300"
                     data-lat={exp.data.lat}
                     data-lng={exp.data.lng}
                     aria-label={`${exp.data.title} at ${exp.data.company} — click to view on map`}
                     tabindex="0">
                     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 mb-2">
                       <div>
-                        <h4 class="font-bold text-stone-800">{exp.data.title}</h4>
-                        <p class="text-stone-500 text-sm font-medium">{exp.data.company}</p>
+                        <h4 class="font-bold text-stone-800 dark:text-stone-100">{exp.data.title}</h4>
+                        <p class="text-stone-500 dark:text-stone-400 text-sm font-medium">{exp.data.company}</p>
                       </div>
-                      <time class="font-mono text-xs text-stone-400 shrink-0 bg-stone-50 px-2 py-1 rounded-md w-fit">
+                      <time class="font-mono text-xs text-stone-400 shrink-0 bg-stone-50 dark:bg-stone-700/50 px-2 py-1 rounded-md w-fit">
                         {exp.data.startDate} — {exp.data.endDate}
                       </time>
                     </div>
@@ -67,9 +67,9 @@ const markers = [
                     {exp.data.highlights.length > 0 && (
                       <ul class="space-y-1.5 mt-3">
                         {exp.data.highlights.map((h: string) => (
-                          <li class="flex items-baseline gap-2 text-stone-500 text-sm leading-relaxed">
+                          <li class="flex items-baseline gap-2 text-stone-500 dark:text-stone-400 text-sm leading-relaxed">
                             <span
-                              class="w-1 h-1 rounded-full bg-stone-400 shrink-0 translate-y-[-1px]"
+                              class="w-1 h-1 rounded-full bg-stone-400 dark:bg-stone-500 shrink-0 translate-y-[-1px]"
                               aria-hidden="true"
                             />
                             <span>{h}</span>
@@ -86,28 +86,28 @@ const markers = [
 
         <h3 class="text-sm font-semibold text-stone-400 uppercase tracking-wider mb-6">Education</h3>
         <div class="relative" role="list" aria-label="Education timeline">
-          <div class="absolute left-3 top-2 bottom-0 w-px bg-stone-200" aria-hidden="true"></div>
+          <div class="absolute left-3 top-2 bottom-0 w-px bg-stone-200 dark:bg-stone-700" aria-hidden="true"></div>
           <div class="space-y-8">
             {
               education.map((edu, i) => (
                 <div class="animate-on-scroll relative pl-10" style={`transition-delay: ${i * 100}ms`} role="listitem">
                   <div
-                    class="absolute left-3 top-2 -translate-x-1/2 w-2.5 h-2.5 rounded-full bg-stone-500 border-[3px] border-stone-100"
+                    class="absolute left-3 top-2 -translate-x-1/2 w-2.5 h-2.5 rounded-full bg-stone-500 border-[3px] border-stone-100 dark:border-stone-900"
                     aria-hidden="true"
                   />
 
                   <div
-                    class="card map-card cursor-pointer group hover:bg-white hover:shadow-md transition-all duration-300"
+                    class="card map-card cursor-pointer group hover:shadow-md transition-all duration-300"
                     data-lat={edu.data.lat}
                     data-lng={edu.data.lng}
                     aria-label={`${edu.data.degree} at ${edu.data.institution} — click to view on map`}
                     tabindex="0">
                     <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-1 mb-2">
                       <div>
-                        <h4 class="font-bold text-stone-800">{edu.data.institution}</h4>
-                        <p class="text-stone-500 text-sm font-medium">{edu.data.degree}</p>
+                        <h4 class="font-bold text-stone-800 dark:text-stone-100">{edu.data.institution}</h4>
+                        <p class="text-stone-500 dark:text-stone-400 text-sm font-medium">{edu.data.degree}</p>
                       </div>
-                      <time class="font-mono text-xs text-stone-400 shrink-0 bg-stone-50 px-2 py-1 rounded-md w-fit">
+                      <time class="font-mono text-xs text-stone-400 shrink-0 bg-stone-50 dark:bg-stone-700/50 px-2 py-1 rounded-md w-fit">
                         {edu.data.startDate} — {edu.data.endDate}
                       </time>
                     </div>
@@ -115,9 +115,9 @@ const markers = [
                     {edu.data.highlights.length > 0 && (
                       <ul class="space-y-1.5 mt-3">
                         {edu.data.highlights.map((h: string) => (
-                          <li class="flex items-baseline gap-2 text-stone-500 text-sm leading-relaxed">
+                          <li class="flex items-baseline gap-2 text-stone-500 dark:text-stone-400 text-sm leading-relaxed">
                             <span
-                              class="w-1 h-1 rounded-full bg-stone-400 shrink-0 translate-y-[-1px]"
+                              class="w-1 h-1 rounded-full bg-stone-400 dark:bg-stone-500 shrink-0 translate-y-[-1px]"
                               aria-hidden="true"
                             />
                             <span>{h}</span>
@@ -139,18 +139,20 @@ const markers = [
             <div class="flex flex-wrap items-center justify-between gap-4 mb-4" aria-label="Map legend">
               <div class="flex items-center gap-4">
                 <div class="flex items-center gap-2">
-                  <span class="w-2.5 h-2.5 rounded-full bg-stone-700" aria-hidden="true"></span>
-                  <span class="text-xs text-stone-500">Work</span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-stone-700 dark:bg-stone-300" aria-hidden="true"></span>
+                  <span class="text-xs text-stone-500 dark:text-stone-400">Work</span>
                 </div>
                 <div class="flex items-center gap-2">
                   <span class="w-2.5 h-2.5 rounded-full bg-stone-400" aria-hidden="true"></span>
-                  <span class="text-xs text-stone-500">Education</span>
+                  <span class="text-xs text-stone-500 dark:text-stone-400">Education</span>
                 </div>
               </div>
               <span class="text-xs text-stone-400 italic">Click card to view on map</span>
             </div>
 
-            <div class="rounded-2xl overflow-hidden border border-stone-200 shadow-sm" style="height: 500px;">
+            <div
+              class="rounded-2xl overflow-hidden border border-stone-200 dark:border-stone-700 shadow-sm"
+              style="height: 500px;">
               <InteractiveMap markers={markers} />
             </div>
           </div>
@@ -165,11 +167,18 @@ const markers = [
     function setActiveCard(card) {
       if (!card) return;
 
+      var isDark = document.documentElement.classList.contains("dark");
+
       // Update active state visuals
       document.querySelectorAll(".map-card").forEach((c) => {
-        c.classList.remove("bg-white", "shadow-md", "ring-1", "ring-stone-300");
+        c.classList.remove("bg-white", "bg-stone-700", "shadow-md", "ring-1", "ring-stone-300", "ring-stone-600");
       });
-      card.classList.add("bg-white", "shadow-md", "ring-1", "ring-stone-300");
+      card.classList.add(
+        isDark ? "bg-stone-700" : "bg-white",
+        "shadow-md",
+        "ring-1",
+        isDark ? "ring-stone-600" : "ring-stone-300",
+      );
 
       // Scroll card into view only if not fully visible
       const rect = card.getBoundingClientRect();
@@ -184,6 +193,15 @@ const markers = [
         card.scrollIntoView({ behavior: "smooth", block: "nearest" });
       }
     }
+
+    // Re-apply active card styles when theme changes
+    const themeObserver = new MutationObserver(() => {
+      const activeCard = document.querySelector(".map-card.shadow-md");
+      if (activeCard) {
+        setActiveCard(activeCard);
+      }
+    });
+    themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
 
     // Handle map marker selection events from the InteractiveMap component
     document.addEventListener("map-marker-selected", (e) => {

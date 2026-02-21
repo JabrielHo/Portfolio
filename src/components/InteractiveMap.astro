@@ -16,7 +16,7 @@ const { markers } = Astro.props;
 ---
 
 <div
-  class="rounded-2xl overflow-hidden border border-stone-200 shadow-sm"
+  class="rounded-2xl overflow-hidden border border-stone-200 dark:border-stone-700 shadow-sm"
   style="height: 500px;"
   role="img"
   aria-label="Interactive map showing work and education locations">
@@ -25,6 +25,65 @@ const { markers } = Astro.props;
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script is:inline src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<style>
+  /* Map popup styles that respond to dark mode via CSS */
+  :global(.map-popup) {
+    font-family: Inter, sans-serif;
+    min-width: 180px;
+  }
+  :global(.map-popup-badge) {
+    display: inline-block;
+    padding: 2px 8px;
+    background: #f5f5f4;
+    color: #57534e;
+    font-size: 10px;
+    font-weight: 600;
+    border-radius: 9999px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  :global(.map-popup-title) {
+    font-weight: 700;
+    font-size: 14px;
+    color: #292524;
+    margin-bottom: 2px;
+  }
+  :global(.map-popup-subtitle) {
+    font-size: 12px;
+    color: #78716c;
+    margin-bottom: 4px;
+  }
+  :global(.map-popup-date) {
+    font-size: 11px;
+    color: #a8a29e;
+    font-family: "JetBrains Mono", monospace;
+  }
+  :global(.map-marker-dot) {
+    border-radius: 50%;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+    border: 3px solid #fff;
+  }
+
+  /* Dark mode overrides */
+  :global(.dark .map-popup-badge) {
+    background: #44403c;
+    color: #d6d3d1;
+  }
+  :global(.dark .map-popup-title) {
+    color: #f5f5f4;
+  }
+  :global(.dark .map-popup-subtitle) {
+    color: #a8a29e;
+  }
+  :global(.dark .map-popup-date) {
+    color: #78716c;
+  }
+  :global(.dark .map-marker-dot) {
+    border-color: #292524;
+  }
+</style>
 
 <script is:inline define:vars={{ markers }}>
   document.addEventListener("DOMContentLoaded", () => {
@@ -38,20 +97,33 @@ const { markers } = Astro.props;
       scrollWheelZoom: true,
     });
 
-    L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
+    // Choose tile layer based on dark mode
+    const isDark = document.documentElement.classList.contains("dark");
+    const tileUrl = isDark
+      ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+      : "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png";
+
+    var tileLayer = L.tileLayer(tileUrl, {
       attribution:
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
       subdomains: "abcd",
       maxZoom: 19,
     }).addTo(map);
 
+    // Listen for theme changes to swap tile layer
+    const observer = new MutationObserver(() => {
+      const nowDark = document.documentElement.classList.contains("dark");
+      const newUrl = nowDark
+        ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+        : "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png";
+      tileLayer.setUrl(newUrl);
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+
     function createIcon(color) {
       return L.divIcon({
         className: "custom-marker",
-        html:
-          '<div style="width:14px;height:14px;background:' +
-          color +
-          ';border-radius:50%;border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.15)"></div>',
+        html: '<div class="map-marker-dot" style="width:14px;height:14px;background:' + color + '"></div>',
         iconSize: [14, 14],
         iconAnchor: [7, 7],
         popupAnchor: [0, -10],
@@ -69,17 +141,17 @@ const { markers } = Astro.props;
       var marker = L.marker([m.lat, m.lng], { icon: icon })
         .addTo(map)
         .bindPopup(
-          '<div style="font-family:Inter,sans-serif;min-width:180px">' +
-            '<span style="display:inline-block;padding:2px 8px;background:#f5f5f4;color:#57534e;font-size:10px;font-weight:600;border-radius:9999px;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px">' +
+          '<div class="map-popup">' +
+            '<span class="map-popup-badge">' +
             typeLabel +
             "</span>" +
-            '<div style="font-weight:700;font-size:14px;color:#292524;margin-bottom:2px">' +
+            '<div class="map-popup-title">' +
             m.title +
             "</div>" +
-            '<div style="font-size:12px;color:#78716c;margin-bottom:4px">' +
+            '<div class="map-popup-subtitle">' +
             m.subtitle +
             "</div>" +
-            '<div style="font-size:11px;color:#a8a29e;font-family:JetBrains Mono,monospace">' +
+            '<div class="map-popup-date">' +
             m.date +
             "</div>" +
             "</div>",
@@ -89,7 +161,6 @@ const { markers } = Astro.props;
       markerRefs[m.lat + "," + m.lng] = marker;
 
       marker.on("click", function () {
-        // Dispatch custom event for external handling
         const event = new CustomEvent("map-marker-selected", {
           detail: { lat: m.lat, lng: m.lng },
         });

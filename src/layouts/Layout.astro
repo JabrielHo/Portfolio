@@ -6,10 +6,7 @@ interface Props {
   description?: string;
 }
 
-const {
-  title = "Jabriel Ho — Software Engineer",
-  description = "Portfolio of Jabriel Ho.",
-} = Astro.props;
+const { title = "Jabriel Ho — Software Engineer", description = "Portfolio of Jabriel Ho." } = Astro.props;
 ---
 
 <!doctype html>
@@ -17,9 +14,22 @@ const {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="color-scheme" content="light" />
+    <meta name="color-scheme" content="light dark" />
     <meta name="description" content={description} />
     <meta name="generator" content={Astro.generator} />
+
+    <!-- Dark mode: apply before paint to prevent flash -->
+    <script is:inline>
+      (function () {
+        const stored = localStorage.getItem("theme");
+        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        if (stored === "dark" || (!stored && prefersDark)) {
+          document.documentElement.classList.add("dark");
+        } else {
+          document.documentElement.classList.remove("dark");
+        }
+      })();
+    </script>
 
     <!-- Open Graph -->
     <meta property="og:title" content={title} />
@@ -37,7 +47,8 @@ const {
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{title}</title>
   </head>
-  <body class="bg-stone-50 text-stone-800 min-h-screen overflow-x-hidden">
+  <body
+    class="bg-stone-50 dark:bg-stone-900 text-stone-800 dark:text-stone-200 min-h-screen overflow-x-hidden transition-colors duration-300">
     <a
       href="#main-content"
       class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-stone-800 focus:text-white focus:rounded-lg focus:outline-none">
