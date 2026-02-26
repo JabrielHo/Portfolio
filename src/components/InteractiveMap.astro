@@ -20,11 +20,8 @@ const { markers } = Astro.props;
   style="height: 500px;"
   role="img"
   aria-label="Interactive map showing work and education locations">
-  <div id="leaflet-map" style="height: 100%; width: 100%;"></div>
+  <div id="leaflet-map" data-markers={JSON.stringify(markers)} style="height: 100%; width: 100%;"></div>
 </div>
-
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<script is:inline src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <style>
   /* Map popup styles that respond to dark mode via CSS */
@@ -85,10 +82,15 @@ const { markers } = Astro.props;
   }
 </style>
 
-<script is:inline define:vars={{ markers }}>
+<script>
+  import "leaflet/dist/leaflet.css";
+  import L from "leaflet";
+
   document.addEventListener("DOMContentLoaded", () => {
     const mapEl = document.getElementById("leaflet-map");
     if (!mapEl) return;
+
+    const markers = JSON.parse((mapEl as HTMLElement).dataset.markers || "[]");
 
     const map = L.map("leaflet-map", {
       center: [1.32, 103.85],
@@ -120,7 +122,7 @@ const { markers } = Astro.props;
     });
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
 
-    function createIcon(color, label) {
+    function createIcon(color: string, label: string) {
       return L.divIcon({
         className: "custom-marker",
         html:
@@ -136,9 +138,9 @@ const { markers } = Astro.props;
     }
 
     // Icons are now created per-marker with individual accessible labels
-    var markerRefs = {};
+    const markerRefs: Record<string, L.Marker> = {};
 
-    markers.forEach(function (m) {
+    markers.forEach(function (m: { lat: number; lng: number; title: string; subtitle: string; date: string; type: "work" | "education" }) {
       var typeLabel = m.type === "work" ? "Work" : "Education";
       var markerLabel = typeLabel + ": " + m.title + " at " + m.subtitle;
       var color = m.type === "work" ? "#44403c" : "#a8a29e";
@@ -183,7 +185,7 @@ const { markers } = Astro.props;
 
     // Listen for fly-to events from the list
     document.addEventListener("fly-to-map", (e) => {
-      const { lat, lng } = e.detail;
+      const { lat, lng } = (e as CustomEvent<{ lat: number; lng: number }>).detail;
       map.flyTo([lat, lng], 15, { duration: 0.8 });
 
       var key = lat + "," + lng;
