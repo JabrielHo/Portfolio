@@ -1,46 +1,121 @@
-# Astro Starter Kit: Basics
+# Portfolio
+
+Personal portfolio site built with [Astro](https://astro.build).
+
+## Setup
 
 ```sh
-npm create astro@latest -- --template basics
+npm install
+npm run dev
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
-
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
+## Project Structure
 
 ```text
-/
-├── public/
-│   └── favicon.svg
-├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
-└── package.json
+src/
+├── components/        # UI components (auto-rendered, no edits needed)
+├── content/
+│   ├── projects/      # Portfolio projects
+│   ├── experience/    # Work experience
+│   ├── education/     # Education history
+│   └── certifications/# Certifications
+├── layouts/
+└── pages/
 ```
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+## Adding Content
 
-## 🧞 Commands
+All content is stored as Markdown files with YAML frontmatter in `src/content/`. Create a new `.md` file in the relevant folder — the site will automatically pick it up.
 
-All commands are run from the root of the project, from a terminal:
+Use the `order` field to control display order (lower = appears first).
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+---
 
-## 👀 Want to learn more?
+### Add a Project
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+Create `src/content/projects/my-project.md`:
+
+```yaml
+---
+title: My Project
+description:
+  - Built X using Y
+  - Achieved Z result
+tags: [TypeScript, React]
+startDate: Jan 2025
+endDate: Mar 2025
+github: https://github.com/you/repo   # optional
+link: https://myproject.com           # optional
+order: 1
+---
+```
+
+---
+
+### Add Work Experience
+
+Create `src/content/experience/my-company.md`:
+
+```yaml
+---
+title: Software Engineer
+company: Acme Corp
+startDate: Jan 2025
+endDate: Jun 2025
+location: Singapore
+lat: 1.3521
+lng: 103.8198
+highlights:
+  - Built X feature used by Y users
+  - Improved performance by Z%
+order: 1
+---
+```
+
+---
+
+### Add Education
+
+Create `src/content/education/my-school.md`:
+
+```yaml
+---
+institution: My University
+degree: Bachelor of Computer Science
+startDate: Aug 2022
+endDate: May 2026
+location: Singapore
+lat: 1.3521
+lng: 103.8198
+highlights:
+  - Dean's List
+  - Relevant coursework: Algorithms, Systems
+order: 1
+---
+```
+
+---
+
+### Add a Certification
+
+Create `src/content/certifications/my-cert.md`:
+
+```yaml
+---
+title: AWS Certified Developer
+issuer: Amazon Web Services
+issueDate: Jan 2025
+expiryDate: Jan 2028      # optional
+description: Associate-level certification  # optional
+link: https://verify.cert.url             # optional
+order: 1
+---
+```
+
+## Commands
+
+| Command           | Action                                      |
+| :---------------- | :------------------------------------------ |
+| `npm run dev`     | Start dev server at `localhost:4321`        |
+| `npm run build`   | Build production site to `./dist/`          |
+| `npm run preview` | Preview production build locally            |
