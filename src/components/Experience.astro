@@ -1,6 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 import InteractiveMap from "./InteractiveMap.astro";
+import TimelineItem from "./TimelineItem.astro";
 
 const experiences = (await getCollection("experience")).sort((a, b) => a.data.order - b.data.order);
 const education = (await getCollection("education")).sort((a, b) => a.data.order - b.data.order);
@@ -42,43 +43,17 @@ const markers = [
           <div class="space-y-8">
             {
               experiences.map((exp, i) => (
-                <div class="animate-on-scroll relative pl-10" style={`transition-delay: ${i * 100}ms`} role="listitem">
-                  <div
-                    class="absolute left-3 top-2 -translate-x-1/2 w-2.5 h-2.5 rounded-full bg-stone-500 border-[3px] border-stone-100 dark:border-stone-900"
-                    aria-hidden="true"
-                  />
-
-                  <div
-                    class="card map-card cursor-pointer group hover:shadow-md transition-all duration-300"
-                    data-lat={exp.data.lat}
-                    data-lng={exp.data.lng}
-                    aria-label={`${exp.data.title} at ${exp.data.company} — click to view on map`}
-                    tabindex="0">
-                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 mb-2">
-                      <div>
-                        <h4 class="font-bold text-stone-800 dark:text-stone-100">{exp.data.title}</h4>
-                        <p class="text-stone-500 dark:text-stone-400 text-sm font-medium">{exp.data.company}</p>
-                      </div>
-                      <time class="font-mono text-xs text-stone-400 shrink-0 bg-stone-50 dark:bg-stone-700/50 px-2 py-1 rounded-md w-fit">
-                        {exp.data.startDate} — {exp.data.endDate}
-                      </time>
-                    </div>
-
-                    {exp.data.highlights.length > 0 && (
-                      <ul class="space-y-1.5 mt-3">
-                        {exp.data.highlights.map((h: string) => (
-                          <li class="flex items-baseline gap-2 text-stone-500 dark:text-stone-400 text-sm leading-relaxed">
-                            <span
-                              class="w-1 h-1 rounded-full bg-stone-400 dark:bg-stone-500 shrink-0 -translate-y-px"
-                              aria-hidden="true"
-                            />
-                            <span>{h}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                </div>
+                <TimelineItem
+                  title={exp.data.title}
+                  subtitle={exp.data.company}
+                  startDate={exp.data.startDate}
+                  endDate={exp.data.endDate}
+                  highlights={exp.data.highlights}
+                  lat={exp.data.lat}
+                  lng={exp.data.lng}
+                  ariaLabel={`${exp.data.title} at ${exp.data.company} — click to view on map`}
+                  index={i}
+                />
               ))
             }
           </div>
@@ -90,43 +65,17 @@ const markers = [
           <div class="space-y-8">
             {
               education.map((edu, i) => (
-                <div class="animate-on-scroll relative pl-10" style={`transition-delay: ${i * 100}ms`} role="listitem">
-                  <div
-                    class="absolute left-3 top-2 -translate-x-1/2 w-2.5 h-2.5 rounded-full bg-stone-500 border-[3px] border-stone-100 dark:border-stone-900"
-                    aria-hidden="true"
-                  />
-
-                  <div
-                    class="card map-card cursor-pointer group hover:shadow-md transition-all duration-300"
-                    data-lat={edu.data.lat}
-                    data-lng={edu.data.lng}
-                    aria-label={`${edu.data.degree} at ${edu.data.institution} — click to view on map`}
-                    tabindex="0">
-                    <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-1 mb-2">
-                      <div>
-                        <h4 class="font-bold text-stone-800 dark:text-stone-100">{edu.data.institution}</h4>
-                        <p class="text-stone-500 dark:text-stone-400 text-sm font-medium">{edu.data.degree}</p>
-                      </div>
-                      <time class="font-mono text-xs text-stone-400 shrink-0 bg-stone-50 dark:bg-stone-700/50 px-2 py-1 rounded-md w-fit">
-                        {edu.data.startDate} — {edu.data.endDate}
-                      </time>
-                    </div>
-
-                    {edu.data.highlights.length > 0 && (
-                      <ul class="space-y-1.5 mt-3">
-                        {edu.data.highlights.map((h: string) => (
-                          <li class="flex items-baseline gap-2 text-stone-500 dark:text-stone-400 text-sm leading-relaxed">
-                            <span
-                              class="w-1 h-1 rounded-full bg-stone-400 dark:bg-stone-500 shrink-0 -translate-y-px"
-                              aria-hidden="true"
-                            />
-                            <span>{h}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                </div>
+                <TimelineItem
+                  title={edu.data.institution}
+                  subtitle={edu.data.degree}
+                  startDate={edu.data.startDate}
+                  endDate={edu.data.endDate}
+                  highlights={edu.data.highlights}
+                  lat={edu.data.lat}
+                  lng={edu.data.lng}
+                  ariaLabel={`${edu.data.degree} at ${edu.data.institution} — click to view on map`}
+                  index={i}
+                />
               ))
             }
           </div>
@@ -230,9 +179,11 @@ const markers = [
 
         const lat = parseFloat(card.dataset.lat);
         const lng = parseFloat(card.dataset.lng);
-        document.dispatchEvent(new CustomEvent("fly-to-map", {
-          detail: { lat, lng },
-        }));
+        document.dispatchEvent(
+          new CustomEvent("fly-to-map", {
+            detail: { lat, lng },
+          }),
+        );
       };
 
       card.addEventListener("click", handleClick);

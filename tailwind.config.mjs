@@ -4,8 +4,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["Inter", "system-ui", "-apple-system", "sans-serif"],
-        mono: ["JetBrains Mono", "Fira Code", "monospace"],
+        sans: ["Inter Variable", "system-ui", "-apple-system", "sans-serif"],
+        mono: ["JetBrains Mono Variable", "Fira Code", "monospace"],
       },
       animation: {
         float: "float 6s ease-in-out infinite",

@@ -91,7 +91,7 @@ const { markers } = Astro.props;
         io.disconnect();
 
         await import("leaflet/dist/leaflet.css");
-        const { default: L } = await import("leaflet");
+        const L = ((await import("leaflet")) as any).default as typeof import("leaflet");
 
         const markers = JSON.parse((mapEl as HTMLElement).dataset.markers || "[]");
 
@@ -142,7 +142,14 @@ const { markers } = Astro.props;
 
         const markerRefs: Record<string, L.Marker> = {};
 
-        markers.forEach(function (m: { lat: number; lng: number; title: string; subtitle: string; date: string; type: "work" | "education" }) {
+        markers.forEach(function (m: {
+          lat: number;
+          lng: number;
+          title: string;
+          subtitle: string;
+          date: string;
+          type: "work" | "education";
+        }) {
           var typeLabel = m.type === "work" ? "Work" : "Education";
           var markerLabel = typeLabel + ": " + m.title + " at " + m.subtitle;
           var color = m.type === "work" ? "#44403c" : "#a8a29e";
@@ -178,9 +185,11 @@ const { markers } = Astro.props;
           }
 
           marker.on("click", function () {
-            document.dispatchEvent(new CustomEvent("map-marker-selected", {
-              detail: { lat: m.lat, lng: m.lng },
-            }));
+            document.dispatchEvent(
+              new CustomEvent("map-marker-selected", {
+                detail: { lat: m.lat, lng: m.lng },
+              }),
+            );
           });
         });
 
