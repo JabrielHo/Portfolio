@@ -29,7 +29,7 @@ const certifications = (await getCollection("certifications")).sort((a, b) => a.
               </div>
 
               {cert.data.description && (
-                <p class="text-stone-500 dark:text-stone-400 text-sm leading-relaxed mb-5 flex-grow">
+                <p class="text-stone-500 dark:text-stone-400 text-sm leading-relaxed mb-5 grow">
                   {cert.data.description}
                 </p>
               )}

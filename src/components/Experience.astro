@@ -69,7 +69,7 @@ const markers = [
                         {exp.data.highlights.map((h: string) => (
                           <li class="flex items-baseline gap-2 text-stone-500 dark:text-stone-400 text-sm leading-relaxed">
                             <span
-                              class="w-1 h-1 rounded-full bg-stone-400 dark:bg-stone-500 shrink-0 translate-y-[-1px]"
+                              class="w-1 h-1 rounded-full bg-stone-400 dark:bg-stone-500 shrink-0 -translate-y-px"
                               aria-hidden="true"
                             />
                             <span>{h}</span>
@@ -117,7 +117,7 @@ const markers = [
                         {edu.data.highlights.map((h: string) => (
                           <li class="flex items-baseline gap-2 text-stone-500 dark:text-stone-400 text-sm leading-relaxed">
                             <span
-                              class="w-1 h-1 rounded-full bg-stone-400 dark:bg-stone-500 shrink-0 translate-y-[-1px]"
+                              class="w-1 h-1 rounded-full bg-stone-400 dark:bg-stone-500 shrink-0 -translate-y-px"
                               aria-hidden="true"
                             />
                             <span>{h}</span>
@@ -134,7 +134,7 @@ const markers = [
       </div>
 
       <div class="lg:col-span-2">
-        <div class="lg:sticky lg:top-[90px]">
+        <div class="lg:sticky lg:top-22.5">
           <div class="animate-on-scroll">
             <div class="flex flex-wrap items-center justify-between gap-4 mb-4" aria-label="Map legend">
               <div class="flex items-center gap-4">
@@ -164,12 +164,13 @@ const markers = [
 
 <script is:inline>
   document.addEventListener("DOMContentLoaded", () => {
-    function setActiveCard(card) {
+    // Applies only CSS class changes — no layout reads.
+    // Safe to call from MutationObserver without forcing a reflow.
+    function applyCardVisuals(card) {
       if (!card) return;
 
       var isDark = document.documentElement.classList.contains("dark");
 
-      // Update active state visuals
       document.querySelectorAll(".map-card").forEach((c) => {
         c.classList.remove("bg-white", "bg-stone-700", "shadow-md", "ring-1", "ring-stone-300", "ring-stone-600");
       });
@@ -179,8 +180,15 @@ const markers = [
         "ring-1",
         isDark ? "ring-stone-600" : "ring-stone-300",
       );
+    }
 
-      // Scroll card into view only if not fully visible
+    // Full card activation: visuals + scroll-into-view (layout read is intentional here,
+    // only called on user interaction, never from MutationObserver).
+    function setActiveCard(card) {
+      if (!card) return;
+
+      applyCardVisuals(card);
+
       const rect = card.getBoundingClientRect();
       const isInViewport =
         rect.top >= 0 &&
@@ -194,11 +202,11 @@ const markers = [
       }
     }
 
-    // Re-apply active card styles when theme changes
+    // Re-apply active card styles when theme changes — visuals only, no layout read.
     const themeObserver = new MutationObserver(() => {
       const activeCard = document.querySelector(".map-card.shadow-md");
       if (activeCard) {
-        setActiveCard(activeCard);
+        applyCardVisuals(activeCard);
       }
     });
     themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
@@ -206,8 +214,7 @@ const markers = [
     // Handle map marker selection events from the InteractiveMap component
     document.addEventListener("map-marker-selected", (e) => {
       const { lat, lng } = e.detail;
-      const selector = `.map-card[data-lat="${lat}"][data-lng="${lng}"]`;
-      const card = document.querySelector(selector);
+      const card = document.querySelector(`.map-card[data-lat="${lat}"][data-lng="${lng}"]`);
       setActiveCard(card);
     });
 
@@ -219,16 +226,13 @@ const markers = [
         }
         if (e.type === "keydown") e.preventDefault();
 
-        // Highlight card
         setActiveCard(card);
 
-        // Notify map to fly to location
         const lat = parseFloat(card.dataset.lat);
         const lng = parseFloat(card.dataset.lng);
-        const event = new CustomEvent("fly-to-map", {
+        document.dispatchEvent(new CustomEvent("fly-to-map", {
           detail: { lat, lng },
-        });
-        document.dispatchEvent(event);
+        }));
       };
 
       card.addEventListener("click", handleClick);
