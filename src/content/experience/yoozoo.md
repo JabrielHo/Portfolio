@@ -9,6 +9,5 @@ highlights:
   - "Conducted QA testing on front-end features, identifying and resolving bugs efficiently"
 lat: 1.2941988460387333
 lng: 103.79344481534174
-location: "Singapore"
 order: 2
 ---

@@ -9,6 +9,5 @@ highlights:
   - "Teaching Assistant for IS111 Introduction to Programming AY2023/2024"
 lat: 1.2976255690883862
 lng: 103.849443179095
-location: "Singapore"
 order: 1
 ---

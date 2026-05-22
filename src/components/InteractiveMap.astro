@@ -25,39 +25,43 @@ const { markers } = Astro.props;
 </div>
 
 <style>
-  /* Map popup styles that respond to dark mode via CSS */
   :global(.map-popup) {
     font-family: "Space Grotesk Variable", sans-serif;
     min-width: 180px;
   }
   :global(.map-popup-badge) {
     display: inline-block;
+    margin-bottom: 8px;
     padding: 2px 8px;
-    background: #f5f5f4;
-    color: #57534e;
+    border-radius: 9999px;
+    background: var(--color-stone-100);
+    color: var(--color-stone-600);
     font-size: 10px;
     font-weight: 600;
-    border-radius: 9999px;
-    margin-bottom: 8px;
     text-transform: uppercase;
     letter-spacing: 1px;
   }
+  :global(.dark .map-popup-badge) {
+    background: var(--color-stone-700);
+    color: var(--color-stone-300);
+  }
   :global(.map-popup-title) {
-    font-weight: 700;
-    font-size: 14px;
-    color: #292524;
     margin-bottom: 2px;
+    color: var(--text-strong);
+    font-size: 14px;
+    font-weight: 700;
   }
   :global(.map-popup-subtitle) {
-    font-size: 12px;
-    color: #78716c;
     margin-bottom: 4px;
+    color: var(--text-muted);
+    font-size: 12px;
   }
   :global(.map-popup-date) {
+    color: var(--text-faint);
     font-size: 11px;
-    color: #a8a29e;
-    font-family: "Space Grotesk Variable", sans-serif;
   }
+
+  /* Marker dots mirror the pins shown next to journey entries. */
   :global(.map-marker-dot) {
     width: 14px;
     height: 14px;
@@ -65,147 +69,109 @@ const { markers } = Astro.props;
     box-sizing: border-box;
   }
   :global(.mm-work) {
-    background: var(--color-stone-900);
+    background: var(--accent);
   }
   :global(.mm-edu) {
     background: transparent;
-    border: 2px solid var(--color-stone-900);
-  }
-
-  /* Dark mode overrides */
-  :global(.dark .map-popup-badge) {
-    background: #44403c;
-    color: #d6d3d1;
-  }
-  :global(.dark .map-popup-title) {
-    color: #f5f5f4;
-  }
-  :global(.dark .map-popup-subtitle) {
-    color: #a8a29e;
-  }
-  :global(.dark .map-popup-date) {
-    color: #78716c;
-  }
-  :global(.dark .mm-work) {
-    background: var(--color-stone-100);
-  }
-  :global(.dark .mm-edu) {
-    border-color: var(--color-stone-100);
+    border: 2px solid var(--accent);
   }
 </style>
 
 <script>
+  import type { Map as LeafletMap, Marker as LeafletMarker } from "leaflet";
+
+  interface MapMarker {
+    lat: number;
+    lng: number;
+    title: string;
+    subtitle: string;
+    date: string;
+    type: "work" | "education";
+  }
+
+  const TILE_URL = {
+    light: "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+    dark: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+  };
+
+  const isDarkMode = () => document.documentElement.classList.contains("dark");
+  const markerKey = (lat: number, lng: number) => `${lat},${lng}`;
+
   const mapEl = document.getElementById("leaflet-map");
-  if (mapEl) {
-    (async () => {
-        const L = ((await import("leaflet")) as any).default as typeof import("leaflet");
+  if (mapEl) initMap(mapEl);
 
-        const markers = JSON.parse((mapEl as HTMLElement).dataset.markers || "[]");
+  async function initMap(el: HTMLElement) {
+    const L = (await import("leaflet")).default;
+    const markers: MapMarker[] = JSON.parse(el.dataset.markers || "[]");
 
-        const map = L.map("leaflet-map", {
-          center: [1.32, 103.85],
-          zoom: 12,
-          zoomControl: true,
-          scrollWheelZoom: true,
-        });
+    const map = L.map(el, { center: [1.32, 103.85], zoom: 12 });
 
-        // Choose tile layer based on dark mode
-        const isDark = document.documentElement.classList.contains("dark");
-        const tileUrl = isDark
-          ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-          : "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png";
+    const tiles = L.tileLayer(isDarkMode() ? TILE_URL.dark : TILE_URL.light, {
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
+      subdomains: "abcd",
+      maxZoom: 19,
+    }).addTo(map);
 
-        var tileLayer = L.tileLayer(tileUrl, {
-          attribution:
-            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
-          subdomains: "abcd",
-          maxZoom: 19,
-        }).addTo(map);
+    // Leaflet needs a size hint once the flex/grid layout has settled.
+    setTimeout(() => map.invalidateSize(), 0);
+    new ResizeObserver(() => map.invalidateSize()).observe(el);
 
-        setTimeout(() => map.invalidateSize(), 0);
-        new ResizeObserver(() => map.invalidateSize()).observe(mapEl as HTMLElement);
+    // Swap the basemap when the site theme toggles.
+    new MutationObserver(() => tiles.setUrl(isDarkMode() ? TILE_URL.dark : TILE_URL.light)).observe(
+      document.documentElement,
+      { attributes: true, attributeFilter: ["class"] },
+    );
 
-        // Listen for theme changes to swap tile layer
-        const observer = new MutationObserver(() => {
-          const nowDark = document.documentElement.classList.contains("dark");
-          const newUrl = nowDark
-            ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-            : "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png";
-          tileLayer.setUrl(newUrl);
-        });
-        observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+    const markerByKey: Record<string, LeafletMarker> = {};
+    for (const m of markers) {
+      markerByKey[markerKey(m.lat, m.lng)] = addMarker(L, map, m);
+    }
 
-        function createIcon(type: "work" | "education", label: string) {
-          const cls = type === "work" ? "mm-work" : "mm-edu";
-          return L.divIcon({
-            className: "custom-marker",
-            html: '<div class="map-marker-dot ' + cls + '" role="img" aria-label="' + label + '"></div>',
-            iconSize: [14, 14],
-            iconAnchor: [7, 7],
-            popupAnchor: [0, -10],
-          });
-        }
+    // List → map: fly to the selected entry and open its popup.
+    document.addEventListener("fly-to-map", (e) => {
+      const { lat, lng } = (e as CustomEvent<{ lat: number; lng: number }>).detail;
+      map.flyTo([lat, lng], 15, { duration: 0.8 });
+      markerByKey[markerKey(lat, lng)]?.openPopup();
+    });
+  }
 
-        const markerRefs: Record<string, L.Marker> = {};
+  function addMarker(L: typeof import("leaflet"), map: LeafletMap, m: MapMarker): LeafletMarker {
+    const typeLabel = m.type === "work" ? "Work" : "Education";
+    const label = `${typeLabel}: ${m.title} at ${m.subtitle}`;
 
-        markers.forEach(function (m: {
-          lat: number;
-          lng: number;
-          title: string;
-          subtitle: string;
-          date: string;
-          type: "work" | "education";
-        }) {
-          var typeLabel = m.type === "work" ? "Work" : "Education";
-          var markerLabel = typeLabel + ": " + m.title + " at " + m.subtitle;
-          var icon = createIcon(m.type, markerLabel);
+    const icon = L.divIcon({
+      className: "custom-marker",
+      html: `<div class="map-marker-dot ${m.type === "work" ? "mm-work" : "mm-edu"}" role="img" aria-label="${label}"></div>`,
+      iconSize: [14, 14],
+      iconAnchor: [7, 7],
+      popupAnchor: [0, -10],
+    });
 
-          var marker = L.marker([m.lat, m.lng], { icon: icon })
-            .addTo(map)
-            .bindPopup(
-              '<div class="map-popup">' +
-                '<span class="map-popup-badge">' +
-                typeLabel +
-                "</span>" +
-                '<div class="map-popup-title">' +
-                m.title +
-                "</div>" +
-                '<div class="map-popup-subtitle">' +
-                m.subtitle +
-                "</div>" +
-                '<div class="map-popup-date">' +
-                m.date +
-                "</div>" +
-                "</div>",
-              { closeButton: false },
-            );
+    const marker = L.marker([m.lat, m.lng], { icon })
+      .addTo(map)
+      .bindPopup(popupHtml(typeLabel, m), { closeButton: false });
 
-          markerRefs[m.lat + "," + m.lng] = marker;
+    // Expose the Leaflet-generated container to assistive tech.
+    const el = marker.getElement();
+    el?.setAttribute("role", "button");
+    el?.setAttribute("aria-label", label);
 
-          // Make the outer Leaflet-generated container accessible
-          var el = marker.getElement();
-          if (el) {
-            el.setAttribute("role", "button");
-            el.setAttribute("aria-label", markerLabel);
-          }
+    // Map → list: tell the journey list which entry was clicked.
+    marker.on("click", () => {
+      document.dispatchEvent(new CustomEvent("map-marker-selected", { detail: { lat: m.lat, lng: m.lng } }));
+    });
 
-          marker.on("click", function () {
-            document.dispatchEvent(
-              new CustomEvent("map-marker-selected", {
-                detail: { lat: m.lat, lng: m.lng },
-              }),
-            );
-          });
-        });
+    return marker;
+  }
 
-        // Listen for fly-to events from the list
-        document.addEventListener("fly-to-map", (e) => {
-          const { lat, lng } = (e as CustomEvent<{ lat: number; lng: number }>).detail;
-          map.flyTo([lat, lng], 15, { duration: 0.8 });
-
-          var key = lat + "," + lng;
-          if (markerRefs[key]) markerRefs[key].openPopup();
-        });
-    })();
+  function popupHtml(typeLabel: string, m: MapMarker): string {
+    return `
+      <div class="map-popup">
+        <span class="map-popup-badge">${typeLabel}</span>
+        <div class="map-popup-title">${m.title}</div>
+        <div class="map-popup-subtitle">${m.subtitle}</div>
+        <div class="map-popup-date">${m.date}</div>
+      </div>`;
   }
 </script>

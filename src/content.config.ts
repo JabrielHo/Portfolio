@@ -1,5 +1,6 @@
-import { defineCollection, z } from "astro:content";
+import { defineCollection } from "astro:content";
 import { glob } from "astro/loaders";
+import { z } from "astro/zod";
 
 const experience = defineCollection({
   loader: glob({ pattern: "**/*.md", base: "./src/content/experience" }),
@@ -11,7 +12,6 @@ const experience = defineCollection({
     highlights: z.array(z.string()).default([]),
     lat: z.number(),
     lng: z.number(),
-    location: z.string(),
     order: z.number().default(0),
   }),
 });
@@ -41,7 +41,6 @@ const education = defineCollection({
     highlights: z.array(z.string()).default([]),
     lat: z.number(),
     lng: z.number(),
-    location: z.string(),
     order: z.number().default(0),
   }),
 });

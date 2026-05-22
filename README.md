@@ -62,7 +62,6 @@ title: Software Engineer
 company: Acme Corp
 startDate: Jan 2025
 endDate: Jun 2025
-location: Singapore
 lat: 1.3521
 lng: 103.8198
 highlights:
@@ -84,7 +83,6 @@ institution: My University
 degree: Bachelor of Computer Science
 startDate: Aug 2022
 endDate: May 2026
-location: Singapore
 lat: 1.3521
 lng: 103.8198
 highlights:

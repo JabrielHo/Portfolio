@@ -1,15 +1,10 @@
 ---
 import GitHubIcon from "../icons/GitHubIcon.astro";
 import LinkedInIcon from "../icons/LinkedInIcon.astro";
-
-interface Props {
-  area?: string;
-}
-const { area } = Astro.props;
 ---
 
-<section class="tile id-tile" style={area ? `grid-area:${area}` : undefined} aria-label="Introduction">
-  <p class="eyebrow">Hi, I'm</p>
+<section class="tile id-tile" aria-label="Introduction">
+  <p class="intro">Hi, I'm</p>
   <h1 class="name">Jabriel Ho</h1>
   <p class="role">Software Engineer · Singapore</p>
 
@@ -21,11 +16,33 @@ const { area } = Astro.props;
       <LinkedInIcon />
     </a>
     <button id="theme-toggle" aria-label="Toggle dark mode">
-      <svg class="ico hidden dark:block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+      <svg
+        class="ico hidden dark:block"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="2"
+        stroke="currentColor"
+        aria-hidden="true">
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"
+        ></path>
       </svg>
-      <svg class="ico block dark:hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+      <svg
+        class="ico block dark:hidden"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="2"
+        stroke="currentColor"
+        aria-hidden="true">
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z"
+        ></path>
       </svg>
     </button>
   </div>
@@ -37,11 +54,11 @@ const { area } = Astro.props;
     flex-direction: column;
     justify-content: center;
   }
-  .eyebrow {
+  .intro {
     font-size: 0.7rem;
     letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: var(--color-stone-500);
+    color: var(--text-muted);
     margin-bottom: 0.35rem;
   }
   .name {
@@ -49,14 +66,11 @@ const { area } = Astro.props;
     font-weight: 700;
     letter-spacing: -0.02em;
     line-height: 1.04;
-    color: var(--color-stone-900);
-  }
-  :global(.dark) .name {
-    color: var(--color-stone-50);
+    color: var(--text-strong);
   }
   .role {
     font-size: 0.85rem;
-    color: var(--color-stone-500);
+    color: var(--text-secondary);
     margin-top: 0.4rem;
   }
   .links {
@@ -72,36 +86,20 @@ const { area } = Astro.props;
     width: 2rem;
     height: 2rem;
     border-radius: 0.55rem;
-    color: var(--color-stone-500);
-    border: 1px solid var(--color-stone-200);
+    color: var(--text-muted);
+    border: 1px solid var(--surface-border);
     background: transparent;
     cursor: pointer;
     transition: all 0.2s;
   }
   .links a:hover,
   .links button:hover {
-    color: var(--color-stone-900);
-    border-color: var(--color-stone-900);
-  }
-  :global(.dark) .links a,
-  :global(.dark) .links button {
-    border-color: var(--color-stone-800);
-    color: var(--color-stone-400);
-  }
-  :global(.dark) .links a:hover,
-  :global(.dark) .links button:hover {
-    color: var(--color-stone-50);
-    border-color: var(--color-stone-100);
+    color: var(--text-strong);
+    border-color: var(--accent);
   }
   .ico {
     width: 1rem;
     height: 1rem;
-  }
-  :global(.dark) .role {
-    color: var(--color-stone-300);
-  }
-  :global(.dark) .eyebrow {
-    color: var(--color-stone-400);
   }
 </style>
 

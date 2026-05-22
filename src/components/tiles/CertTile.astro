@@ -11,30 +11,31 @@ interface Cert {
 }
 interface Props {
   certifications: Cert[];
-  area?: string;
 }
-const { certifications, area } = Astro.props;
+const { certifications } = Astro.props;
 ---
 
-<section class="tile cert-tile" style={area ? `grid-area:${area}` : undefined} aria-label="Certifications">
-  <h2 class="label">Certification</h2>
-  <div class="cards">
+<section class="tile cert-tile" aria-label="Certifications">
+  <h2 class="eyebrow">Certification</h2>
+  <div class="stack-scroll">
     {
       certifications.map((c) => (
-        <article class="cert">
-          <div class="cert-head">
-            <div class="cert-head-text">
-              <h3 class="cert-title">{c.title}</h3>
-              <p class="cert-issuer">{c.issuer}</p>
+        <article class="panel">
+          <div class="panel-head">
+            <div>
+              <h3 class="panel-title">{c.title}</h3>
+              <p class="panel-subtitle">{c.issuer}</p>
             </div>
-            <span class="cert-date">
+            <span class="meta">
               {c.issueDate}
               {c.expiryDate && ` — ${c.expiryDate}`}
             </span>
           </div>
-          {c.description && <p class="cert-desc">{c.description}</p>}
+
+          {c.description && <p class="description">{c.description}</p>}
+
           {c.link && (
-            <a class="cert-link" href={c.link} target="_blank" rel="noopener noreferrer">
+            <a class="link" href={c.link} target="_blank" rel="noopener noreferrer">
               <ExternalLinkIcon /> <span>View credential</span>
             </a>
           )}
@@ -52,94 +53,25 @@ const { certifications, area } = Astro.props;
     gap: 0.6rem;
     min-height: 0;
   }
-  .label {
-    font-size: 0.62rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--color-stone-500);
-  }
-  .cards {
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-    overflow-y: auto;
-    padding-right: 0.25rem;
-  }
-  .cert {
-    padding: 0.7rem 0.8rem;
-    border: 1px solid var(--color-stone-200);
-    border-radius: 0.7rem;
-    background: var(--color-stone-50);
-  }
-  :global(.dark) .cert {
-    border-color: var(--color-stone-800);
-    background: var(--color-stone-800);
-  }
-  .cert-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 0.5rem;
-  }
-  .cert-head-text {
-    min-width: 0;
-  }
-  .cert-title {
-    font-weight: 600;
-    font-size: 0.9rem;
-    color: var(--color-stone-900);
-  }
-  :global(.dark) .cert-title {
-    color: var(--color-stone-50);
-  }
-  .cert-issuer {
-    font-size: 0.72rem;
-    color: var(--color-stone-500);
-    margin-top: 0.1rem;
-  }
-  .cert-date {
-    flex: none;
-    font-size: 0.62rem;
-    color: var(--color-stone-500);
-    text-align: right;
-    white-space: nowrap;
-    letter-spacing: 0.02em;
-    font-variant-numeric: tabular-nums;
-  }
-  .cert-desc {
+  .description {
     font-size: 0.74rem;
     line-height: 1.5;
-    color: var(--color-stone-500);
+    color: var(--text-secondary);
     margin-top: 0.5rem;
   }
-  .cert-link {
+  .link {
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
-    font-size: 0.72rem;
-    font-weight: 500;
-    color: var(--color-stone-500);
+    width: 100%;
     margin-top: 0.7rem;
     padding-top: 0.6rem;
-    border-top: 1px solid var(--color-stone-200);
-    width: 100%;
+    border-top: 1px solid var(--divider);
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--text-secondary);
   }
-  :global(.dark) .cert-link {
-    border-color: var(--color-stone-800);
-  }
-  .cert-link:hover {
-    color: var(--color-stone-900);
-  }
-  :global(.dark) .cert-link:hover {
-    color: var(--color-stone-100);
-  }
-  :global(.dark) .cert-issuer,
-  :global(.dark) .cert-desc,
-  :global(.dark) .cert-link {
-    color: var(--color-stone-300);
-  }
-  :global(.dark) .label,
-  :global(.dark) .cert-date {
-    color: var(--color-stone-400);
+  .link:hover {
+    color: var(--text-strong);
   }
 </style>

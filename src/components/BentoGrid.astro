@@ -6,34 +6,20 @@ import ProjectsTile from "./tiles/ProjectsTile.astro";
 import CertTile from "./tiles/CertTile.astro";
 import InteractiveMap from "./InteractiveMap.astro";
 
-const experiences = (await getCollection("experience")).sort((a, b) => a.data.order - b.data.order);
-const education = (await getCollection("education")).sort((a, b) => a.data.order - b.data.order);
-const projects = (await getCollection("projects")).sort((a, b) => a.data.order - b.data.order);
-const certifications = (await getCollection("certifications")).sort((a, b) => a.data.order - b.data.order);
+const byOrder = (a: { data: { order: number } }, b: { data: { order: number } }) => a.data.order - b.data.order;
 
-const markers = [
-  ...experiences.map((e) => ({
-    lat: e.data.lat,
-    lng: e.data.lng,
-    title: e.data.company,
-    subtitle: e.data.title,
-    date: `${e.data.startDate} — ${e.data.endDate}`,
-    type: "work" as const,
-  })),
-  ...education.map((e) => ({
-    lat: e.data.lat,
-    lng: e.data.lng,
-    title: e.data.institution,
-    subtitle: e.data.degree,
-    date: `${e.data.startDate} — ${e.data.endDate}`,
-    type: "education" as const,
-  })),
-];
+const experiences = (await getCollection("experience")).sort(byOrder);
+const education = (await getCollection("education")).sort(byOrder);
+const projects = (await getCollection("projects")).sort(byOrder);
+const certifications = (await getCollection("certifications")).sort(byOrder);
 
+const dateRange = (d: { startDate: string; endDate: string }) => `${d.startDate} — ${d.endDate}`;
+
+// One normalized shape for both the timeline list and the map markers.
 const work = experiences.map((e) => ({
   org: e.data.company,
   role: e.data.title,
-  date: `${e.data.startDate} — ${e.data.endDate}`,
+  date: dateRange(e.data),
   highlights: e.data.highlights,
   lat: e.data.lat,
   lng: e.data.lng,
@@ -41,23 +27,34 @@ const work = experiences.map((e) => ({
 const study = education.map((e) => ({
   org: e.data.institution,
   role: e.data.degree,
-  date: `${e.data.startDate} — ${e.data.endDate}`,
+  date: dateRange(e.data),
   highlights: e.data.highlights,
   lat: e.data.lat,
   lng: e.data.lng,
 }));
+
+type JourneyEntry = (typeof work)[number];
+const toMarker = (type: "work" | "education") => (e: JourneyEntry) => ({
+  lat: e.lat,
+  lng: e.lng,
+  title: e.org,
+  subtitle: e.role,
+  date: e.date,
+  type,
+});
+const markers = [...work.map(toMarker("work")), ...study.map(toMarker("education"))];
 
 const projectItems = projects.map((p) => p.data);
 const certItems = certifications.map((c) => c.data);
 ---
 
 <main id="bento" class="bento">
-  <IdentityTile area="id" />
-  <JourneyTile work={work} study={study} area="journey" />
-  <div class="tile area-map" style="grid-area:map; padding:0">
+  <IdentityTile />
+  <JourneyTile work={work} study={study} />
+  <div class="tile area-map">
     <InteractiveMap markers={markers} />
   </div>
-  <div class="side" style="grid-area:side">
+  <div class="side">
     <ProjectsTile projects={projectItems} />
     <CertTile certifications={certItems} />
   </div>
@@ -77,13 +74,26 @@ const certItems = certifications.map((c) => c.data);
     overflow: hidden;
   }
 
+  /* Tiles stay layout-agnostic; the grid decides where each one goes. */
+  .bento :global(.id-tile) {
+    grid-area: id;
+  }
+  .bento :global(.journey-tile) {
+    grid-area: journey;
+  }
+  .area-map {
+    grid-area: map;
+    padding: 0;
+  }
   .side {
+    grid-area: side;
     display: flex;
     flex-direction: column;
     gap: clamp(0.5rem, 1vw, 1rem);
     min-height: 0;
   }
 
+  /* Tablet: map moves beside the intro/journey column, side row drops below. */
   @media (min-width: 1024px) and (max-width: 1279px) {
     .bento {
       grid-template-columns: 1.4fr 1.6fr;
@@ -100,6 +110,7 @@ const certItems = certifications.map((c) => c.data);
     }
   }
 
+  /* Short landscape screens: let the page grow instead of clipping. */
   @media (min-width: 1024px) and (max-height: 720px) {
     .bento {
       height: auto;
@@ -107,6 +118,7 @@ const certItems = certifications.map((c) => c.data);
     }
   }
 
+  /* Mobile: single column, everything stacks. */
   @media (max-width: 1023px) {
     .bento {
       grid-template-columns: 1fr;
