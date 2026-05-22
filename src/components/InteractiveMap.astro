@@ -1,4 +1,6 @@
 ---
+import "leaflet/dist/leaflet.css";
+
 interface Marker {
   lat: number;
   lng: number;
@@ -16,8 +18,7 @@ const { markers } = Astro.props;
 ---
 
 <div
-  class="rounded-2xl overflow-hidden border border-stone-200 dark:border-stone-700 shadow-sm"
-  style="height: 500px;"
+  class="rounded-2xl overflow-hidden border border-stone-200 dark:border-stone-800 h-full"
   role="img"
   aria-label="Interactive map showing work and education locations">
   <div id="leaflet-map" data-markers={JSON.stringify(markers)} style="height: 100%; width: 100%;"></div>
@@ -26,7 +27,7 @@ const { markers } = Astro.props;
 <style>
   /* Map popup styles that respond to dark mode via CSS */
   :global(.map-popup) {
-    font-family: Inter, sans-serif;
+    font-family: "Space Grotesk Variable", sans-serif;
     min-width: 180px;
   }
   :global(.map-popup-badge) {
@@ -55,12 +56,20 @@ const { markers } = Astro.props;
   :global(.map-popup-date) {
     font-size: 11px;
     color: #a8a29e;
-    font-family: "JetBrains Mono", monospace;
+    font-family: "Space Grotesk Variable", sans-serif;
   }
   :global(.map-marker-dot) {
+    width: 14px;
+    height: 14px;
     border-radius: 50%;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
-    border: 3px solid #fff;
+    box-sizing: border-box;
+  }
+  :global(.mm-work) {
+    background: var(--color-stone-900);
+  }
+  :global(.mm-edu) {
+    background: transparent;
+    border: 2px solid var(--color-stone-900);
   }
 
   /* Dark mode overrides */
@@ -77,20 +86,18 @@ const { markers } = Astro.props;
   :global(.dark .map-popup-date) {
     color: #78716c;
   }
-  :global(.dark .map-marker-dot) {
-    border-color: #292524;
+  :global(.dark .mm-work) {
+    background: var(--color-stone-100);
+  }
+  :global(.dark .mm-edu) {
+    border-color: var(--color-stone-100);
   }
 </style>
 
 <script>
   const mapEl = document.getElementById("leaflet-map");
   if (mapEl) {
-    const io = new IntersectionObserver(
-      async ([entry]) => {
-        if (!entry.isIntersecting) return;
-        io.disconnect();
-
-        await import("leaflet/dist/leaflet.css");
+    (async () => {
         const L = ((await import("leaflet")) as any).default as typeof import("leaflet");
 
         const markers = JSON.parse((mapEl as HTMLElement).dataset.markers || "[]");
@@ -115,6 +122,9 @@ const { markers } = Astro.props;
           maxZoom: 19,
         }).addTo(map);
 
+        setTimeout(() => map.invalidateSize(), 0);
+        new ResizeObserver(() => map.invalidateSize()).observe(mapEl as HTMLElement);
+
         // Listen for theme changes to swap tile layer
         const observer = new MutationObserver(() => {
           const nowDark = document.documentElement.classList.contains("dark");
@@ -125,15 +135,11 @@ const { markers } = Astro.props;
         });
         observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
 
-        function createIcon(color: string, label: string) {
+        function createIcon(type: "work" | "education", label: string) {
+          const cls = type === "work" ? "mm-work" : "mm-edu";
           return L.divIcon({
             className: "custom-marker",
-            html:
-              '<div class="map-marker-dot" role="img" aria-label="' +
-              label +
-              '" style="width:14px;height:14px;background:' +
-              color +
-              '"></div>',
+            html: '<div class="map-marker-dot ' + cls + '" role="img" aria-label="' + label + '"></div>',
             iconSize: [14, 14],
             iconAnchor: [7, 7],
             popupAnchor: [0, -10],
@@ -152,8 +158,7 @@ const { markers } = Astro.props;
         }) {
           var typeLabel = m.type === "work" ? "Work" : "Education";
           var markerLabel = typeLabel + ": " + m.title + " at " + m.subtitle;
-          var color = m.type === "work" ? "#44403c" : "#a8a29e";
-          var icon = createIcon(color, markerLabel);
+          var icon = createIcon(m.type, markerLabel);
 
           var marker = L.marker([m.lat, m.lng], { icon: icon })
             .addTo(map)
@@ -201,10 +206,6 @@ const { markers } = Astro.props;
           var key = lat + "," + lng;
           if (markerRefs[key]) markerRefs[key].openPopup();
         });
-      },
-      { rootMargin: "200px 0px" },
-    );
-
-    io.observe(mapEl);
+    })();
   }
 </script>

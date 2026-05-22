@@ -1,0 +1,234 @@
+---
+interface Entry {
+  org: string;
+  role: string;
+  date: string;
+  highlights: string[];
+  lat: number;
+  lng: number;
+}
+interface Props {
+  work: Entry[];
+  study: Entry[];
+  area?: string;
+}
+const { work, study, area } = Astro.props;
+
+const groups = [
+  { label: "Experience", type: "work" as const, items: work },
+  { label: "Education", type: "education" as const, items: study },
+];
+---
+
+<section
+  id="journey"
+  class="tile journey-tile"
+  style={area ? `grid-area:${area}` : undefined}
+  aria-label="Experience and education">
+  <div class="scroll">
+    {
+      groups.map((group) => (
+        <div class="group">
+          <h2 class="group-label">{group.label}</h2>
+          <ul role="list">
+            {group.items.map((item) => (
+              <li>
+                <button
+                  class="map-card"
+                  data-lat={item.lat}
+                  data-lng={item.lng}
+                  title={`Show ${item.org} on map`}>
+                  <span class={`marker ${group.type}`} aria-hidden="true" />
+                  <span class="card-main">
+                    <span class="head">
+                      <span class="head-text">
+                        <span class="org">{item.org}</span>
+                        <span class="role">{item.role}</span>
+                      </span>
+                      <span class="date">{item.date}</span>
+                    </span>
+                    {item.highlights.length > 0 && (
+                      <ul class="highlights">
+                        {item.highlights.map((h) => (
+                          <li>{h}</li>
+                        ))}
+                      </ul>
+                    )}
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .journey-tile {
+    display: flex;
+    min-height: 0;
+  }
+  .scroll {
+    overflow-y: auto;
+    width: 100%;
+    padding-right: 0.25rem;
+  }
+  .group + .group {
+    margin-top: 0.9rem;
+  }
+  .group-label {
+    font-size: 0.62rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-stone-400);
+    margin-bottom: 0.5rem;
+  }
+  ul[role="list"] {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .map-card {
+    display: flex;
+    gap: 0.6rem;
+    width: 100%;
+    text-align: left;
+    padding: 0.55rem 0.65rem;
+    border: 1px solid var(--color-stone-200);
+    border-radius: 0.7rem;
+    background: var(--color-stone-50);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .map-card:hover {
+    border-color: var(--color-stone-400);
+    background: var(--color-stone-100);
+  }
+  .map-card.is-active {
+    border-color: var(--color-stone-900);
+    box-shadow: inset 0 0 0 1px var(--color-stone-900);
+  }
+  :global(.dark) .map-card {
+    border-color: var(--color-stone-800);
+    background: var(--color-stone-800);
+  }
+  :global(.dark) .map-card:hover {
+    background: var(--color-stone-700);
+  }
+  :global(.dark) .map-card.is-active {
+    border-color: var(--color-stone-100);
+    box-shadow: inset 0 0 0 1px var(--color-stone-100);
+  }
+  .marker {
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 50%;
+    margin-top: 0.3rem;
+    flex: none;
+  }
+  .marker.work {
+    background: var(--color-stone-900);
+  }
+  .marker.education {
+    background: transparent;
+    border: 2px solid var(--color-stone-900);
+  }
+  :global(.dark) .marker.work {
+    background: var(--color-stone-100);
+  }
+  :global(.dark) .marker.education {
+    border-color: var(--color-stone-100);
+  }
+  .card-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  .head-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .org {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--color-stone-900);
+  }
+  :global(.dark) .org {
+    color: var(--color-stone-50);
+  }
+  .role {
+    font-size: 0.72rem;
+    color: var(--color-stone-500);
+  }
+  .date {
+    flex: none;
+    font-size: 0.62rem;
+    color: var(--color-stone-400);
+    text-align: right;
+    white-space: nowrap;
+    letter-spacing: 0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+  .highlights {
+    margin-top: 0.35rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+  .highlights li {
+    font-size: 0.7rem;
+    line-height: 1.35;
+    color: var(--color-stone-500);
+    padding-left: 0.7rem;
+    position: relative;
+  }
+  .highlights li::before {
+    content: "–";
+    position: absolute;
+    left: 0;
+    color: var(--color-stone-400);
+  }
+  :global(.dark) .role,
+  :global(.dark) .highlights li {
+    color: var(--color-stone-300);
+  }
+</style>
+
+<script>
+  const cards = Array.from(document.querySelectorAll<HTMLButtonElement>("#journey .map-card"));
+
+  function setActive(card: Element | null) {
+    cards.forEach((c) => c.classList.remove("is-active"));
+    if (card) {
+      card.classList.add("is-active");
+      card.scrollIntoView({ block: "nearest" });
+    }
+  }
+
+  cards.forEach((card) => {
+    card.addEventListener("click", () => {
+      setActive(card);
+      document.dispatchEvent(
+        new CustomEvent("fly-to-map", {
+          detail: { lat: parseFloat(card.dataset.lat || "0"), lng: parseFloat(card.dataset.lng || "0") },
+        }),
+      );
+    });
+  });
+
+  document.addEventListener("map-marker-selected", (e) => {
+    const { lat, lng } = (e as CustomEvent<{ lat: number; lng: number }>).detail;
+    const card = document.querySelector(`#journey .map-card[data-lat="${lat}"][data-lng="${lng}"]`);
+    setActive(card);
+  });
+</script>

@@ -1,0 +1,141 @@
+---
+import ExternalLinkIcon from "../icons/ExternalLinkIcon.astro";
+
+interface Cert {
+  title: string;
+  issuer: string;
+  issueDate: string;
+  expiryDate?: string;
+  description?: string;
+  link?: string;
+}
+interface Props {
+  certifications: Cert[];
+  area?: string;
+}
+const { certifications, area } = Astro.props;
+---
+
+<section class="tile cert-tile" style={area ? `grid-area:${area}` : undefined} aria-label="Certifications">
+  <h2 class="label">Certification</h2>
+  <div class="cards">
+    {
+      certifications.map((c) => (
+        <article class="cert">
+          <div class="cert-head">
+            <div class="cert-head-text">
+              <h3 class="cert-title">{c.title}</h3>
+              <p class="cert-issuer">{c.issuer}</p>
+            </div>
+            <span class="cert-date">
+              {c.issueDate}
+              {c.expiryDate && ` — ${c.expiryDate}`}
+            </span>
+          </div>
+          {c.description && <p class="cert-desc">{c.description}</p>}
+          {c.link && (
+            <a class="cert-link" href={c.link} target="_blank" rel="noopener noreferrer">
+              <ExternalLinkIcon /> <span>View credential</span>
+            </a>
+          )}
+        </article>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .cert-tile {
+    flex: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    min-height: 0;
+  }
+  .label {
+    font-size: 0.62rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-stone-400);
+  }
+  .cards {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    overflow-y: auto;
+    padding-right: 0.25rem;
+  }
+  .cert {
+    padding: 0.7rem 0.8rem;
+    border: 1px solid var(--color-stone-200);
+    border-radius: 0.7rem;
+    background: var(--color-stone-50);
+  }
+  :global(.dark) .cert {
+    border-color: var(--color-stone-800);
+    background: var(--color-stone-800);
+  }
+  .cert-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  .cert-head-text {
+    min-width: 0;
+  }
+  .cert-title {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--color-stone-900);
+  }
+  :global(.dark) .cert-title {
+    color: var(--color-stone-50);
+  }
+  .cert-issuer {
+    font-size: 0.72rem;
+    color: var(--color-stone-500);
+    margin-top: 0.1rem;
+  }
+  .cert-date {
+    flex: none;
+    font-size: 0.62rem;
+    color: var(--color-stone-400);
+    text-align: right;
+    white-space: nowrap;
+    letter-spacing: 0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+  .cert-desc {
+    font-size: 0.74rem;
+    line-height: 1.5;
+    color: var(--color-stone-500);
+    margin-top: 0.5rem;
+  }
+  .cert-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--color-stone-500);
+    margin-top: 0.7rem;
+    padding-top: 0.6rem;
+    border-top: 1px solid var(--color-stone-200);
+    width: 100%;
+  }
+  :global(.dark) .cert-link {
+    border-color: var(--color-stone-800);
+  }
+  .cert-link:hover {
+    color: var(--color-stone-900);
+  }
+  :global(.dark) .cert-link:hover {
+    color: var(--color-stone-100);
+  }
+  :global(.dark) .cert-issuer,
+  :global(.dark) .cert-desc,
+  :global(.dark) .cert-link {
+    color: var(--color-stone-300);
+  }
+</style>

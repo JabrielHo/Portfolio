@@ -1,0 +1,126 @@
+---
+import { getCollection } from "astro:content";
+import IdentityTile from "./tiles/IdentityTile.astro";
+import JourneyTile from "./tiles/JourneyTile.astro";
+import ProjectsTile from "./tiles/ProjectsTile.astro";
+import CertTile from "./tiles/CertTile.astro";
+import InteractiveMap from "./InteractiveMap.astro";
+
+const experiences = (await getCollection("experience")).sort((a, b) => a.data.order - b.data.order);
+const education = (await getCollection("education")).sort((a, b) => a.data.order - b.data.order);
+const projects = (await getCollection("projects")).sort((a, b) => a.data.order - b.data.order);
+const certifications = (await getCollection("certifications")).sort((a, b) => a.data.order - b.data.order);
+
+const markers = [
+  ...experiences.map((e) => ({
+    lat: e.data.lat,
+    lng: e.data.lng,
+    title: e.data.company,
+    subtitle: e.data.title,
+    date: `${e.data.startDate} — ${e.data.endDate}`,
+    type: "work" as const,
+  })),
+  ...education.map((e) => ({
+    lat: e.data.lat,
+    lng: e.data.lng,
+    title: e.data.institution,
+    subtitle: e.data.degree,
+    date: `${e.data.startDate} — ${e.data.endDate}`,
+    type: "education" as const,
+  })),
+];
+
+const work = experiences.map((e) => ({
+  org: e.data.company,
+  role: e.data.title,
+  date: `${e.data.startDate} — ${e.data.endDate}`,
+  highlights: e.data.highlights,
+  lat: e.data.lat,
+  lng: e.data.lng,
+}));
+const study = education.map((e) => ({
+  org: e.data.institution,
+  role: e.data.degree,
+  date: `${e.data.startDate} — ${e.data.endDate}`,
+  highlights: e.data.highlights,
+  lat: e.data.lat,
+  lng: e.data.lng,
+}));
+
+const projectItems = projects.map((p) => p.data);
+const certItems = certifications.map((c) => c.data);
+---
+
+<main id="bento" class="bento">
+  <IdentityTile area="id" />
+  <JourneyTile work={work} study={study} area="journey" />
+  <div class="tile area-map" style="grid-area:map; padding:0">
+    <InteractiveMap markers={markers} />
+  </div>
+  <div class="side" style="grid-area:side">
+    <ProjectsTile projects={projectItems} />
+    <CertTile certifications={certItems} />
+  </div>
+</main>
+
+<style>
+  .bento {
+    display: grid;
+    gap: clamp(0.5rem, 1vw, 1rem);
+    padding: clamp(0.75rem, 1.5vw, 1.25rem);
+    grid-template-columns: 1.4fr 2.3fr 1.3fr;
+    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-areas:
+      "id      map side"
+      "journey map side";
+    height: 100dvh;
+    overflow: hidden;
+  }
+
+  .side {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(0.5rem, 1vw, 1rem);
+    min-height: 0;
+  }
+
+  @media (min-width: 1024px) and (max-width: 1279px) {
+    .bento {
+      grid-template-columns: 1.4fr 1.6fr;
+      grid-template-rows: auto minmax(0, 1fr) auto;
+      grid-template-areas:
+        "id      map"
+        "journey map"
+        "side    side";
+      height: auto;
+      overflow: visible;
+    }
+    .area-map {
+      min-height: 320px;
+    }
+  }
+
+  @media (min-width: 1024px) and (max-height: 720px) {
+    .bento {
+      height: auto;
+      overflow: visible;
+    }
+  }
+
+  @media (max-width: 1023px) {
+    .bento {
+      grid-template-columns: 1fr;
+      grid-template-rows: none;
+      grid-template-areas:
+        "id"
+        "journey"
+        "map"
+        "side";
+      height: auto;
+      overflow: visible;
+    }
+    .area-map {
+      height: 300px;
+    }
+  }
+</style>
