@@ -56,7 +56,7 @@ const { certifications, area } = Astro.props;
     font-size: 0.62rem;
     letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: var(--color-stone-400);
+    color: var(--color-stone-500);
   }
   .cards {
     display: flex;
@@ -100,7 +100,7 @@ const { certifications, area } = Astro.props;
   .cert-date {
     flex: none;
     font-size: 0.62rem;
-    color: var(--color-stone-400);
+    color: var(--color-stone-500);
     text-align: right;
     white-space: nowrap;
     letter-spacing: 0.02em;
@@ -137,5 +137,9 @@ const { certifications, area } = Astro.props;
   :global(.dark) .cert-desc,
   :global(.dark) .cert-link {
     color: var(--color-stone-300);
+  }
+  :global(.dark) .label,
+  :global(.dark) .cert-date {
+    color: var(--color-stone-400);
   }
 </style>
