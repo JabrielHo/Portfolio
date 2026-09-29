@@ -111,6 +111,11 @@
     min-height: 0;
   }
 
+  /* Fade the bottom edge while more cards are hidden below (set by BentoGrid). */
+  .stack-scroll.has-more {
+    mask-image: linear-gradient(to bottom, #000 calc(100% - 3rem), transparent);
+  }
+
   /* Card header: a title block on the left, a date on the right. */
   .panel-head {
     display: flex;
