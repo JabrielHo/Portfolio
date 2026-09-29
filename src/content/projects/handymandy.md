@@ -2,12 +2,10 @@
 title: "HandyMandy"
 course: "IS216 Web Application Development 2"
 description:
-  - "Designed and developed a responsive web application using Vue.js and the Bootstrap UI library"
-  - "Integrated Firebase Cloud Firestore, Storage, and Hosting for backend services"
-tags: ["Vue.js", "Bootstrap", "Firebase", "Cloud Firestore"]
+  - "Built a community marketplace where residents post, request and offer home services"
+  - "Designed the responsive Vue.js front end with Bootstrap and ran the backend on Firebase Cloud Firestore, Storage and Hosting"
+tags: ["Vue.js", "Bootstrap", "Firebase"]
 github: "https://github.com/JabrielHo/IS216-HandyMandy"
 link: "https://handymandy.web.app/"
-startDate: "Aug 2024"
-endDate: "Nov 2024"
-order: 2
+order: 3
 ---

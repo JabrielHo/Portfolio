@@ -23,8 +23,6 @@ const projects = defineCollection({
     course: z.string().optional(),
     description: z.array(z.string()),
     tags: z.array(z.string()).default([]),
-    startDate: z.string(),
-    endDate: z.string(),
     link: z.string().optional(),
     github: z.string().optional(),
     order: z.number().default(0),
