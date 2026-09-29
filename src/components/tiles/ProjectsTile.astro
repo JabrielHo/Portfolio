@@ -7,8 +7,6 @@ interface Project {
   course?: string;
   description: string[];
   tags: string[];
-  startDate: string;
-  endDate: string;
   github?: string;
   link?: string;
 }
@@ -29,9 +27,6 @@ const { projects } = Astro.props;
               <h3 class="panel-title">{p.title}</h3>
               {p.course && <p class="panel-subtitle">{p.course}</p>}
             </div>
-            <span class="meta">
-              {p.startDate} — {p.endDate}
-            </span>
           </div>
 
           <ul class="dash-list description">

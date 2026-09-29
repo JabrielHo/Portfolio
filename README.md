@@ -45,8 +45,6 @@ description:
   - Built X using Y
   - Achieved Z result
 tags: [TypeScript, React]
-startDate: Jan 2025
-endDate: Mar 2025
 github: https://github.com/you/repo   # optional
 link: https://myproject.com           # optional
 order: 1

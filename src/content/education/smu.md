@@ -2,7 +2,7 @@
 institution: "Singapore Management University"
 degree: "Bachelor of Science (Software Engineering)"
 startDate: "Aug 2023"
-endDate: "Jul 2027"
+endDate: "Jun 2027"
 highlights:
   - "Dean's List AY2024/2025"
   - "Teaching Assistant for COR-IS1704 Computational Thinking and Programming AY2024/2025"
