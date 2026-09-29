@@ -60,6 +60,22 @@ const certItems = certifications.map((c) => c.data);
   </div>
 </main>
 
+<script>
+  // Flag scroll lists that have cards hidden below the fold, so the CSS can fade their bottom edge.
+  const updateFade = (el: HTMLElement) =>
+    el.classList.toggle("has-more", el.scrollTop + el.clientHeight < el.scrollHeight - 2);
+
+  const lists = document.querySelectorAll<HTMLElement>(".stack-scroll");
+  const resize = new ResizeObserver((entries) => entries.forEach((e) => updateFade(e.target as HTMLElement)));
+  lists.forEach((el) => {
+    updateFade(el);
+    el.addEventListener("scroll", () => updateFade(el), { passive: true });
+    resize.observe(el);
+  });
+  // Web fonts can change card heights after first paint.
+  document.fonts.ready.then(() => lists.forEach(updateFade));
+</script>
+
 <style>
   .bento {
     display: grid;
