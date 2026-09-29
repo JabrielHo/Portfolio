@@ -6,8 +6,11 @@ Personal portfolio site built with [Astro](https://astro.build).
 
 ```sh
 npm install
+cp .env.example .env   # then fill in PUBLIC_CARTO_API_KEY
 npm run dev
 ```
+
+The interactive map uses [CARTO basemaps](https://carto.com/basemaps), which require an API key (free at [carto.com/basemaps/apikey](https://carto.com/basemaps/apikey)). Set `PUBLIC_CARTO_API_KEY` locally in `.env` and in your hosting provider's environment variables; without it the map tiles show an "API KEY REQUIRED" watermark.
 
 ## Project Structure
 
