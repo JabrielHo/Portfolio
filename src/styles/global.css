@@ -3,13 +3,7 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-/*
- * Semantic color tokens.
- *
- * Components reference these instead of raw `stone-*` shades, so light/dark
- * values live in exactly one place. Changing a shade (e.g. for contrast)
- * means editing a single line here rather than every component.
- */
+/* Components use these semantic tokens instead of raw stone-* shades, so each light/dark value lives here once. */
 @layer base {
   :root {
     --text-strong: var(--color-stone-900);
@@ -68,13 +62,7 @@
   }
 }
 
-/*
- * Shared building blocks for the content tiles. Each tile (Journey, Projects,
- * Certifications) is a list of cards with the same anatomy, so the common
- * pieces are defined once here and the components only keep their unique parts.
- */
 @layer components {
-  /* Small uppercase section heading, e.g. "Experience", "Projects". */
   .eyebrow {
     font-size: 0.62rem;
     letter-spacing: 0.18em;
@@ -82,7 +70,6 @@
     color: var(--text-muted);
   }
 
-  /* Right-aligned date / metadata sitting opposite a title. */
   .meta {
     flex: none;
     font-size: 0.62rem;
@@ -93,7 +80,6 @@
     font-variant-numeric: tabular-nums;
   }
 
-  /* A bordered card surface inside a tile. */
   .panel {
     padding: 0.7rem 0.8rem;
     border: 1px solid var(--surface-border);
@@ -101,7 +87,6 @@
     background: var(--surface-bg);
   }
 
-  /* Vertical, independently scrollable list of cards. */
   .stack-scroll {
     display: flex;
     flex-direction: column;
@@ -116,7 +101,6 @@
     mask-image: linear-gradient(to bottom, #000 calc(100% - 3rem), transparent);
   }
 
-  /* Card header: a title block on the left, a date on the right. */
   .panel-head {
     display: flex;
     justify-content: space-between;
@@ -134,7 +118,6 @@
     margin-top: 0.1rem;
   }
 
-  /* Bullet list rendered with an en-dash marker. */
   .dash-list {
     display: flex;
     flex-direction: column;
@@ -155,7 +138,7 @@
   }
 }
 
-/* Leaflet map overrides */
+/* Leaflet hardcodes its own colors, so matching the theme needs !important. */
 .leaflet-container {
   background: theme("colors.stone.50") !important;
   border-radius: 16px;
@@ -192,7 +175,6 @@
   color: theme("colors.stone.400") !important;
 }
 
-/* Leaflet controls dark mode */
 .dark .leaflet-control-zoom a {
   background-color: theme("colors.stone.800") !important;
   color: theme("colors.stone.300") !important;
