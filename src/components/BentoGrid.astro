@@ -9,7 +9,6 @@ import InteractiveMap from "./InteractiveMap.astro";
 
 const dateRange = (d: { startDate: string; endDate: string }) => `${d.startDate} — ${d.endDate}`;
 
-// One normalized shape for both the timeline list and the map markers.
 const work: JourneyEntry[] = (await getSortedData("experience")).map((e) => ({
   org: e.company,
   role: e.title,
@@ -127,7 +126,6 @@ const certifications = await getSortedData("certifications");
     }
   }
 
-  /* Mobile: single column, everything stacks. */
   @media (max-width: 1023px) {
     .bento {
       grid-template-columns: 1fr;

@@ -23,20 +23,14 @@ const { title = "Jabriel — Software Engineer", description = "Portfolio of Jab
       (function () {
         const stored = localStorage.getItem("theme");
         const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-        if (stored === "dark" || (!stored && prefersDark)) {
-          document.documentElement.classList.add("dark");
-        } else {
-          document.documentElement.classList.remove("dark");
-        }
+        document.documentElement.classList.toggle("dark", stored === "dark" || (!stored && prefersDark));
       })();
     </script>
 
-    <!-- Open Graph -->
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
 
-    <!-- Open the connection to the map tile server before Leaflet requests tiles. -->
     <link rel="preconnect" href="https://basemaps.cartocdn.com" />
 
     <link rel="icon" type="image/png" sizes="64x64" href="/favicon-64.png" />

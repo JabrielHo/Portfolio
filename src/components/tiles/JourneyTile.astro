@@ -68,7 +68,6 @@ const groups: { label: string; type: JourneyKind; items: JourneyEntry[] }[] = [
     gap: 0.4rem;
   }
 
-  /* A journey entry is a clickable panel that pans the map. */
   .map-card {
     display: flex;
     gap: 0.6rem;
@@ -138,7 +137,7 @@ const groups: { label: string; type: JourneyKind; items: JourneyEntry[] }[] = [
       setActive(card);
       document.dispatchEvent(
         new CustomEvent("fly-to-map", {
-          detail: { lat: parseFloat(card.dataset.lat || "0"), lng: parseFloat(card.dataset.lng || "0") },
+          detail: { lat: Number(card.dataset.lat), lng: Number(card.dataset.lng) },
         }),
       );
     });

@@ -14,11 +14,11 @@ Run `npm run check` before committing. It type-checks the components against the
 
 The interactive map uses [CARTO basemaps](https://carto.com/basemaps), which require an API key (free at [carto.com/basemaps/apikey](https://carto.com/basemaps/apikey)). Set `PUBLIC_CARTO_API_KEY` locally in `.env` and in your hosting provider's environment variables; without it the map tiles show an "API KEY REQUIRED" watermark.
 
-## Project Structure
+## Project structure
 
 ```text
 src/
-├── components/        # UI components (auto-rendered, no edits needed)
+├── components/        # Page tiles, map, and icons
 ├── content/
 │   ├── projects/      # Portfolio projects
 │   ├── experience/    # Work experience
@@ -29,15 +29,15 @@ src/
 └── pages/
 ```
 
-## Adding Content
+## Adding content
 
-All content is stored as Markdown files with YAML frontmatter in `src/content/`. Create a new `.md` file in the relevant folder — the site will automatically pick it up.
+All content is stored as Markdown files with YAML frontmatter in `src/content/`. A new `.md` file in the relevant folder shows up on the next build.
 
 Use the `order` field to control display order (lower = appears first).
 
 ---
 
-### Add a Project
+### Add a project
 
 Create `src/content/projects/my-project.md`:
 
@@ -56,7 +56,7 @@ order: 1
 
 ---
 
-### Add Work Experience
+### Add work experience
 
 Create `src/content/experience/my-company.md`:
 
@@ -77,7 +77,7 @@ order: 1
 
 ---
 
-### Add Education
+### Add education
 
 Create `src/content/education/my-school.md`:
 
@@ -98,7 +98,7 @@ order: 1
 
 ---
 
-### Add a Certification
+### Add a certification
 
 Create `src/content/certifications/my-cert.md`:
 

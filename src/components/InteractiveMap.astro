@@ -99,11 +99,8 @@ const { markers } = Astro.props;
       maxZoom: 19,
     }).addTo(map);
 
-    // Leaflet needs a size hint once the flex/grid layout has settled.
-    setTimeout(() => map.invalidateSize(), 0);
     new ResizeObserver(() => map.invalidateSize()).observe(el);
 
-    // Swap the basemap when the site theme toggles.
     new MutationObserver(() => tiles.setUrl(isDarkMode() ? TILE_URL.dark : TILE_URL.light)).observe(
       document.documentElement,
       { attributes: true, attributeFilter: ["class"] },
@@ -114,7 +111,6 @@ const { markers } = Astro.props;
       markerByKey[markerKey(m.lat, m.lng)] = addMarker(L, map, m);
     }
 
-    // List → map: fly to the selected entry and open its popup.
     document.addEventListener("fly-to-map", (e) => {
       const { lat, lng } = e.detail;
       map.flyTo([lat, lng], 15, { duration: 0.8 });
@@ -143,7 +139,6 @@ const { markers } = Astro.props;
     el?.setAttribute("role", "button");
     el?.setAttribute("aria-label", label);
 
-    // Map → list: tell the journey list which entry was clicked.
     marker.on("click", () => {
       document.dispatchEvent(new CustomEvent("map-marker-selected", { detail: { lat: m.lat, lng: m.lng } }));
     });
