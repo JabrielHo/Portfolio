@@ -1,40 +1,33 @@
 ---
-import { getCollection } from "astro:content";
+import { getSortedData } from "../lib/content";
+import type { JourneyEntry, JourneyKind, MapMarker } from "../lib/journey";
 import IdentityTile from "./tiles/IdentityTile.astro";
 import JourneyTile from "./tiles/JourneyTile.astro";
 import ProjectsTile from "./tiles/ProjectsTile.astro";
 import CertTile from "./tiles/CertTile.astro";
 import InteractiveMap from "./InteractiveMap.astro";
 
-const byOrder = (a: { data: { order: number } }, b: { data: { order: number } }) => a.data.order - b.data.order;
-
-const experiences = (await getCollection("experience")).sort(byOrder);
-const education = (await getCollection("education")).sort(byOrder);
-const projects = (await getCollection("projects")).sort(byOrder);
-const certifications = (await getCollection("certifications")).sort(byOrder);
-
 const dateRange = (d: { startDate: string; endDate: string }) => `${d.startDate} — ${d.endDate}`;
 
 // One normalized shape for both the timeline list and the map markers.
-const work = experiences.map((e) => ({
-  org: e.data.company,
-  role: e.data.title,
-  date: dateRange(e.data),
-  highlights: e.data.highlights,
-  lat: e.data.lat,
-  lng: e.data.lng,
+const work: JourneyEntry[] = (await getSortedData("experience")).map((e) => ({
+  org: e.company,
+  role: e.title,
+  date: dateRange(e),
+  highlights: e.highlights,
+  lat: e.lat,
+  lng: e.lng,
 }));
-const study = education.map((e) => ({
-  org: e.data.institution,
-  role: e.data.degree,
-  date: dateRange(e.data),
-  highlights: e.data.highlights,
-  lat: e.data.lat,
-  lng: e.data.lng,
+const study: JourneyEntry[] = (await getSortedData("education")).map((e) => ({
+  org: e.institution,
+  role: e.degree,
+  date: dateRange(e),
+  highlights: e.highlights,
+  lat: e.lat,
+  lng: e.lng,
 }));
 
-type JourneyEntry = (typeof work)[number];
-const toMarker = (type: "work" | "education") => (e: JourneyEntry) => ({
+const toMarker = (type: JourneyKind) => (e: JourneyEntry): MapMarker => ({
   lat: e.lat,
   lng: e.lng,
   title: e.org,
@@ -44,8 +37,8 @@ const toMarker = (type: "work" | "education") => (e: JourneyEntry) => ({
 });
 const markers = [...work.map(toMarker("work")), ...study.map(toMarker("education"))];
 
-const projectItems = projects.map((p) => p.data);
-const certItems = certifications.map((c) => c.data);
+const projects = await getSortedData("projects");
+const certifications = await getSortedData("certifications");
 ---
 
 <main id="bento" class="bento">
@@ -55,8 +48,8 @@ const certItems = certifications.map((c) => c.data);
     <InteractiveMap markers={markers} />
   </div>
   <div class="side">
-    <ProjectsTile projects={projectItems} />
-    <CertTile certifications={certItems} />
+    <ProjectsTile projects={projects} />
+    <CertTile certifications={certifications} />
   </div>
 </main>
 

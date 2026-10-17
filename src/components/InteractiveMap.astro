@@ -1,17 +1,9 @@
 ---
 import "leaflet/dist/leaflet.css";
-
-interface Marker {
-  lat: number;
-  lng: number;
-  title: string;
-  subtitle: string;
-  date: string;
-  type: "work" | "education";
-}
+import type { MapMarker } from "../lib/journey";
 
 interface Props {
-  markers: Marker[];
+  markers: MapMarker[];
 }
 
 const { markers } = Astro.props;
@@ -79,15 +71,7 @@ const { markers } = Astro.props;
 
 <script>
   import type { Map as LeafletMap, Marker as LeafletMarker } from "leaflet";
-
-  interface MapMarker {
-    lat: number;
-    lng: number;
-    title: string;
-    subtitle: string;
-    date: string;
-    type: "work" | "education";
-  }
+  import type { MapMarker } from "../lib/journey";
 
   // CARTO requires an API key on basemap requests; without one every tile is
   // stamped "API KEY REQUIRED". Get a free key at https://carto.com/basemaps/apikey.
@@ -132,7 +116,7 @@ const { markers } = Astro.props;
 
     // List → map: fly to the selected entry and open its popup.
     document.addEventListener("fly-to-map", (e) => {
-      const { lat, lng } = (e as CustomEvent<{ lat: number; lng: number }>).detail;
+      const { lat, lng } = e.detail;
       map.flyTo([lat, lng], 15, { duration: 0.8 });
       markerByKey[markerKey(lat, lng)]?.openPopup();
     });

@@ -1,21 +1,15 @@
 ---
-interface Entry {
-  org: string;
-  role: string;
-  date: string;
-  highlights: string[];
-  lat: number;
-  lng: number;
-}
+import type { JourneyEntry, JourneyKind } from "../../lib/journey";
+
 interface Props {
-  work: Entry[];
-  study: Entry[];
+  work: JourneyEntry[];
+  study: JourneyEntry[];
 }
 const { work, study } = Astro.props;
 
-const groups = [
-  { label: "Experience", type: "work" as const, items: work },
-  { label: "Education", type: "education" as const, items: study },
+const groups: { label: string; type: JourneyKind; items: JourneyEntry[] }[] = [
+  { label: "Experience", type: "work", items: work },
+  { label: "Education", type: "education", items: study },
 ];
 ---
 
@@ -151,7 +145,7 @@ const groups = [
   });
 
   document.addEventListener("map-marker-selected", (e) => {
-    const { lat, lng } = (e as CustomEvent<{ lat: number; lng: number }>).detail;
+    const { lat, lng } = e.detail;
     const card = document.querySelector(`#journey .map-card[data-lat="${lat}"][data-lng="${lng}"]`);
     setActive(card);
   });
