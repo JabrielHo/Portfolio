@@ -1,16 +1,9 @@
 ---
+import type { Data } from "../../lib/content";
 import ExternalLinkIcon from "../icons/ExternalLinkIcon.astro";
 
-interface Cert {
-  title: string;
-  issuer: string;
-  issueDate: string;
-  expiryDate?: string;
-  description?: string;
-  link?: string;
-}
 interface Props {
-  certifications: Cert[];
+  certifications: Data<"certifications">[];
 }
 const { certifications } = Astro.props;
 ---

@@ -1,18 +1,19 @@
 ---
+import { profile } from "../../lib/profile";
 import GitHubIcon from "../icons/GitHubIcon.astro";
 import LinkedInIcon from "../icons/LinkedInIcon.astro";
 ---
 
 <section class="tile id-tile" aria-label="Introduction">
   <p class="intro">Hi, I'm</p>
-  <h1 class="name">Jabriel Ho</h1>
+  <h1 class="name">{profile.name}</h1>
   <p class="role">Software Engineer · Singapore</p>
 
   <div class="links">
-    <a href="https://github.com/JabrielHo" target="_blank" rel="noopener noreferrer" aria-label="GitHub profile">
+    <a href={profile.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub profile">
       <GitHubIcon />
     </a>
-    <a href="https://linkedin.com/in/jabrielho" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn profile">
+    <a href={profile.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn profile">
       <LinkedInIcon />
     </a>
     <button id="theme-toggle" aria-label="Toggle dark mode">

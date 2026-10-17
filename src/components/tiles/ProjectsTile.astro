@@ -1,17 +1,10 @@
 ---
 import GitHubIcon from "../icons/GitHubIcon.astro";
+import type { Data } from "../../lib/content";
 import ExternalLinkIcon from "../icons/ExternalLinkIcon.astro";
 
-interface Project {
-  title: string;
-  course?: string;
-  description: string[];
-  tags: string[];
-  github?: string;
-  link?: string;
-}
 interface Props {
-  projects: Project[];
+  projects: Data<"projects">[];
 }
 const { projects } = Astro.props;
 ---

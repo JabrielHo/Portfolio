@@ -1,24 +1,24 @@
 import type { APIRoute } from "astro";
-import { getCollection } from "astro:content";
+import { getSortedData } from "../lib/content";
+import { profile } from "../lib/profile";
 
 // A Markdown summary of the portfolio for LLM tools (https://llmstxt.org), built from the same content collections as the homepage.
-const byOrder = (a: { data: { order: number } }, b: { data: { order: number } }) => a.data.order - b.data.order;
 const bullets = (items: string[], indent = "  ") => items.map((i) => `${indent}- ${i}`).join("\n");
 
 export const GET: APIRoute = async () => {
-  const experience = (await getCollection("experience")).sort(byOrder).map((e) => e.data);
-  const education = (await getCollection("education")).sort(byOrder).map((e) => e.data);
-  const projects = (await getCollection("projects")).sort(byOrder).map((p) => p.data);
-  const certifications = (await getCollection("certifications")).sort(byOrder).map((c) => c.data);
+  const experience = await getSortedData("experience");
+  const education = await getSortedData("education");
+  const projects = await getSortedData("projects");
+  const certifications = await getSortedData("certifications");
 
   const sections = [
-    "# Jabriel Ho",
+    `# ${profile.name}`,
     "> Software engineer based in Singapore.",
     [
       "## Links",
       "- [Portfolio](https://jabrielho.com/)",
-      "- [GitHub](https://github.com/JabrielHo)",
-      "- [LinkedIn](https://linkedin.com/in/jabrielho)",
+      `- [GitHub](${profile.github})`,
+      `- [LinkedIn](${profile.linkedin})`,
     ].join("\n"),
     "## Experience\n" +
       experience

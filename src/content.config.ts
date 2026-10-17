@@ -2,17 +2,21 @@ import { defineCollection } from "astro:content";
 import { glob } from "astro/loaders";
 import { z } from "astro/zod";
 
+const timelineFields = {
+  startDate: z.string(),
+  endDate: z.string(),
+  highlights: z.array(z.string()).default([]),
+  lat: z.number(),
+  lng: z.number(),
+  order: z.number().default(0),
+};
+
 const experience = defineCollection({
   loader: glob({ pattern: "**/*.md", base: "./src/content/experience" }),
   schema: z.object({
     title: z.string(),
     company: z.string(),
-    startDate: z.string(),
-    endDate: z.string(),
-    highlights: z.array(z.string()).default([]),
-    lat: z.number(),
-    lng: z.number(),
-    order: z.number().default(0),
+    ...timelineFields,
   }),
 });
 
@@ -34,12 +38,7 @@ const education = defineCollection({
   schema: z.object({
     institution: z.string(),
     degree: z.string(),
-    startDate: z.string(),
-    endDate: z.string(),
-    highlights: z.array(z.string()).default([]),
-    lat: z.number(),
-    lng: z.number(),
-    order: z.number().default(0),
+    ...timelineFields,
   }),
 });
 
