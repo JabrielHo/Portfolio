@@ -78,7 +78,10 @@ const groups: { label: string; type: JourneyKind; items: JourneyEntry[] }[] = [
     border-radius: 0.7rem;
     background: var(--surface-bg);
     cursor: pointer;
-    transition: all 0.2s;
+    transition:
+      border-color 0.2s,
+      background-color 0.2s,
+      box-shadow 0.2s;
   }
   .map-card:hover {
     border-color: var(--surface-border-strong);
