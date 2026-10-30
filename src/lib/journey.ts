@@ -12,10 +12,7 @@ export interface JourneyEntry extends LatLng {
   highlights: string[];
 }
 
-export interface MapMarker extends LatLng {
-  title: string;
-  subtitle: string;
-  date: string;
+export interface MapMarker extends Omit<JourneyEntry, "highlights"> {
   type: JourneyKind;
 }
 

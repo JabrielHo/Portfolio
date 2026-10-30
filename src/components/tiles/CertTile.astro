@@ -1,5 +1,5 @@
 ---
-import type { Data } from "../../lib/content";
+import { dateRange, type Data } from "../../lib/content";
 import ExternalLinkIcon from "../icons/ExternalLinkIcon.astro";
 
 interface Props {
@@ -19,10 +19,7 @@ const { certifications } = Astro.props;
               <h3 class="panel-title">{c.title}</h3>
               <p class="panel-subtitle">{c.issuer}</p>
             </div>
-            <span class="meta">
-              {c.issueDate}
-              {c.expiryDate && ` — ${c.expiryDate}`}
-            </span>
+            <span class="meta">{dateRange(c.issueDate, c.expiryDate)}</span>
           </div>
 
           {c.description && <p class="description">{c.description}</p>}

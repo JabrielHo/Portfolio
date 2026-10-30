@@ -1,5 +1,5 @@
 ---
-import { getSortedData } from "../lib/content";
+import { dateRange, getSortedData, type Data } from "../lib/content";
 import type { JourneyEntry, JourneyKind, MapMarker } from "../lib/journey";
 import IdentityTile from "./tiles/IdentityTile.astro";
 import JourneyTile from "./tiles/JourneyTile.astro";
@@ -7,33 +7,20 @@ import ProjectsTile from "./tiles/ProjectsTile.astro";
 import CertTile from "./tiles/CertTile.astro";
 import InteractiveMap from "./InteractiveMap.astro";
 
-const dateRange = (d: { startDate: string; endDate: string }) => `${d.startDate} — ${d.endDate}`;
-
-const work: JourneyEntry[] = (await getSortedData("experience")).map((e) => ({
-  org: e.company,
-  role: e.title,
-  date: dateRange(e),
+const toEntry = (org: string, role: string, e: Data<"experience"> | Data<"education">): JourneyEntry => ({
+  org,
+  role,
+  date: dateRange(e.startDate, e.endDate),
   highlights: e.highlights,
   lat: e.lat,
   lng: e.lng,
-}));
-const study: JourneyEntry[] = (await getSortedData("education")).map((e) => ({
-  org: e.institution,
-  role: e.degree,
-  date: dateRange(e),
-  highlights: e.highlights,
-  lat: e.lat,
-  lng: e.lng,
-}));
-
-const toMarker = (type: JourneyKind) => (e: JourneyEntry): MapMarker => ({
-  lat: e.lat,
-  lng: e.lng,
-  title: e.org,
-  subtitle: e.role,
-  date: e.date,
-  type,
 });
+const work = (await getSortedData("experience")).map((e) => toEntry(e.company, e.title, e));
+const study = (await getSortedData("education")).map((e) => toEntry(e.institution, e.degree, e));
+
+const toMarker =
+  (type: JourneyKind) =>
+  ({ org, role, date, lat, lng }: JourneyEntry): MapMarker => ({ org, role, date, lat, lng, type });
 const markers = [...work.map(toMarker("work")), ...study.map(toMarker("education"))];
 
 const projects = await getSortedData("projects");
@@ -60,7 +47,6 @@ const certifications = await getSortedData("certifications");
   const lists = document.querySelectorAll<HTMLElement>(".stack-scroll");
   const resize = new ResizeObserver((entries) => entries.forEach((e) => updateFade(e.target as HTMLElement)));
   lists.forEach((el) => {
-    updateFade(el);
     el.addEventListener("scroll", () => updateFade(el), { passive: true });
     resize.observe(el);
   });
