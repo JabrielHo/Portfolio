@@ -87,6 +87,8 @@ const { markers } = Astro.props;
     dark: `https://basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png?key=${CARTO_KEY}`,
   };
 
+  const POPUP_CLEARANCE = 140;
+
   const isDarkMode = () => document.documentElement.classList.contains("dark");
   const escapeHtml = (s: string) => s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 
@@ -101,7 +103,16 @@ const { markers } = Astro.props;
       mapEl.classList.add("map-failed");
       return null;
     });
-    document.addEventListener("select-entry", async (e) => (await pendingSelectEntry)?.(e.detail.id));
+    document.addEventListener("select-entry", async (e) => {
+      revealMarkerSpot(mapEl);
+      (await pendingSelectEntry)?.(e.detail.id);
+    });
+  }
+
+  function revealMarkerSpot(el: HTMLElement) {
+    const { top, height } = el.getBoundingClientRect();
+    const markerY = top + height / 2;
+    if (markerY < POPUP_CLEARANCE || markerY > window.innerHeight) el.scrollIntoView({ block: "center" });
   }
 
   async function initMap(el: HTMLElement) {
