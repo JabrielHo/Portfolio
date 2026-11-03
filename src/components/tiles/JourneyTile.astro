@@ -125,6 +125,7 @@ const groups: { label: string; type: JourneyKind; items: JourneyEntry[] }[] = [
 </style>
 
 <script>
+  const list = document.querySelector<HTMLElement>("#journey .stack-scroll")!;
   const cards = Array.from(document.querySelectorAll<HTMLButtonElement>("#journey .map-card"));
 
   cards.forEach((card) => {
@@ -134,10 +135,11 @@ const groups: { label: string; type: JourneyKind; items: JourneyEntry[] }[] = [
   });
 
   document.addEventListener("selection-changed", (e) => {
+    const listScrolls = list.scrollHeight > list.clientHeight;
     cards.forEach((card) => {
       const selected = card.dataset.entryId === e.detail.id;
       card.classList.toggle("is-active", selected);
-      if (selected) card.scrollIntoView({ block: "nearest" });
+      if (selected && listScrolls) card.scrollIntoView({ block: "nearest" });
     });
   });
 </script>
