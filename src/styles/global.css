@@ -6,6 +6,7 @@
 /* Components use these semantic tokens instead of raw stone-* shades, so each light/dark value lives here once. */
 @layer base {
   :root {
+    color-scheme: light;
     --text-strong: var(--color-stone-900);
     --text-secondary: var(--color-stone-500);
     --text-muted: var(--color-stone-500);
@@ -22,6 +23,7 @@
   }
 
   .dark {
+    color-scheme: dark;
     --text-strong: var(--color-stone-50);
     --text-secondary: var(--color-stone-300);
     --text-muted: var(--color-stone-400);

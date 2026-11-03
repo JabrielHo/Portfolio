@@ -22,9 +22,14 @@ const { title = "Jabriel — Software Engineer", description = "Portfolio of Jab
     <!-- Dark mode: apply before paint to prevent flash -->
     <script is:inline>
       (function () {
-        const stored = localStorage.getItem("theme");
-        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-        document.documentElement.classList.toggle("dark", stored === "dark" || (!stored && prefersDark));
+        const osDark = window.matchMedia("(prefers-color-scheme: dark)");
+        const apply = () => {
+          const stored = localStorage.getItem("theme");
+          document.documentElement.classList.toggle("dark", stored === "dark" || (!stored && osDark.matches));
+        };
+        apply();
+        osDark.addEventListener("change", apply);
+        window.addEventListener("storage", apply);
       })();
     </script>
 

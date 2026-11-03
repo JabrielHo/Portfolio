@@ -109,7 +109,9 @@ import LinkedInIcon from "../icons/LinkedInIcon.astro";
 <script>
   function toggleTheme() {
     const isDark = document.documentElement.classList.toggle("dark");
-    localStorage.setItem("theme", isDark ? "dark" : "light");
+    const matchesOs = isDark === window.matchMedia("(prefers-color-scheme: dark)").matches;
+    if (matchesOs) localStorage.removeItem("theme");
+    else localStorage.setItem("theme", isDark ? "dark" : "light");
   }
   document.getElementById("theme-toggle")?.addEventListener("click", toggleTheme);
 </script>
