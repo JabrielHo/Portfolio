@@ -1,15 +1,13 @@
 export type JourneyKind = "work" | "education";
 
-export interface LatLng {
-  lat: number;
-  lng: number;
-}
-
-export interface JourneyEntry extends LatLng {
+export interface JourneyEntry {
+  id: string;
   org: string;
   role: string;
   date: string;
   highlights: string[];
+  lat: number;
+  lng: number;
 }
 
 export interface MapMarker extends Omit<JourneyEntry, "highlights"> {
@@ -19,7 +17,7 @@ export interface MapMarker extends Omit<JourneyEntry, "highlights"> {
 // The journey list and the map live in separate components, so they sync selection through document events.
 declare global {
   interface DocumentEventMap {
-    "fly-to-map": CustomEvent<LatLng>;
-    "map-marker-selected": CustomEvent<LatLng>;
+    "select-entry": CustomEvent<{ id: string }>;
+    "selection-changed": CustomEvent<{ id: string | null }>;
   }
 }

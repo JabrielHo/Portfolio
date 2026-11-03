@@ -22,7 +22,7 @@ const groups: { label: string; type: JourneyKind; items: JourneyEntry[] }[] = [
           <ul role="list" class="entries">
             {group.items.map((item) => (
               <li>
-                <button class="map-card" data-lat={item.lat} data-lng={item.lng} title={`Show ${item.org} on map`}>
+                <button class="map-card" data-entry-id={item.id} title={`Show ${item.org} on map`}>
                   <span class={`marker ${group.type}`} aria-hidden="true" />
                   <span class="card-main">
                     <span class="panel-head">
@@ -127,28 +127,17 @@ const groups: { label: string; type: JourneyKind; items: JourneyEntry[] }[] = [
 <script>
   const cards = Array.from(document.querySelectorAll<HTMLButtonElement>("#journey .map-card"));
 
-  function setActive(card: Element | null) {
-    cards.forEach((c) => c.classList.remove("is-active"));
-    if (card) {
-      card.classList.add("is-active");
-      card.scrollIntoView({ block: "nearest" });
-    }
-  }
-
   cards.forEach((card) => {
     card.addEventListener("click", () => {
-      setActive(card);
-      document.dispatchEvent(
-        new CustomEvent("fly-to-map", {
-          detail: { lat: Number(card.dataset.lat), lng: Number(card.dataset.lng) },
-        }),
-      );
+      document.dispatchEvent(new CustomEvent("select-entry", { detail: { id: card.dataset.entryId! } }));
     });
   });
 
-  document.addEventListener("map-marker-selected", (e) => {
-    const { lat, lng } = e.detail;
-    const card = document.querySelector(`#journey .map-card[data-lat="${lat}"][data-lng="${lng}"]`);
-    setActive(card);
+  document.addEventListener("selection-changed", (e) => {
+    cards.forEach((card) => {
+      const selected = card.dataset.entryId === e.detail.id;
+      card.classList.toggle("is-active", selected);
+      if (selected) card.scrollIntoView({ block: "nearest" });
+    });
   });
 </script>

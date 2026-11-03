@@ -8,6 +8,7 @@ import CertTile from "./tiles/CertTile.astro";
 import InteractiveMap from "./InteractiveMap.astro";
 
 const toEntry = (org: string, role: string, e: Data<"experience"> | Data<"education">): JourneyEntry => ({
+  id: `${org}|${role}|${e.startDate}`,
   org,
   role,
   date: dateRange(e.startDate, e.endDate),
@@ -20,7 +21,7 @@ const study = (await getSortedData("education")).map((e) => toEntry(e.institutio
 
 const toMarker =
   (type: JourneyKind) =>
-  ({ org, role, date, lat, lng }: JourneyEntry): MapMarker => ({ org, role, date, lat, lng, type });
+  ({ id, org, role, date, lat, lng }: JourneyEntry): MapMarker => ({ id, org, role, date, lat, lng, type });
 const markers = [...work.map(toMarker("work")), ...study.map(toMarker("education"))];
 
 const projects = await getSortedData("projects");

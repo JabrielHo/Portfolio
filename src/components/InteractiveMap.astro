@@ -11,7 +11,7 @@ const { markers } = Astro.props;
 
 <div
   class="rounded-2xl overflow-hidden border border-stone-200 dark:border-stone-800 h-full"
-  role="img"
+  role="region"
   aria-label="Interactive map showing work and education locations">
   <div id="leaflet-map" data-markers={JSON.stringify(markers)} style="height: 100%; width: 100%;"></div>
 </div>
@@ -63,6 +63,16 @@ const { markers } = Astro.props;
     background: transparent;
     border: 2px solid var(--accent);
   }
+
+  :global(.map-failed) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+  }
 </style>
 
 <script>
@@ -78,11 +88,21 @@ const { markers } = Astro.props;
   };
 
   const isDarkMode = () => document.documentElement.classList.contains("dark");
-  const markerKey = (lat: number, lng: number) => `${lat},${lng}`;
   const escapeHtml = (s: string) => s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 
+  const announceSelection = (id: string | null) =>
+    document.dispatchEvent(new CustomEvent("selection-changed", { detail: { id } }));
+
   const mapEl = document.getElementById("leaflet-map");
-  if (mapEl) initMap(mapEl);
+  if (mapEl) {
+    const pendingSelectEntry = initMap(mapEl).catch((err) => {
+      console.error(err);
+      mapEl.textContent = "Map unavailable. Refresh to try again.";
+      mapEl.classList.add("map-failed");
+      return null;
+    });
+    document.addEventListener("select-entry", async (e) => (await pendingSelectEntry)?.(e.detail.id));
+  }
 
   async function initMap(el: HTMLElement) {
     const L = (await import("leaflet")).default;
@@ -103,16 +123,24 @@ const { markers } = Astro.props;
       { attributes: true, attributeFilter: ["class"] },
     );
 
-    const markerByKey: Record<string, LeafletMarker> = {};
+    const flyToMarker = (marker: LeafletMarker) => map.flyTo(marker.getLatLng(), 15, { duration: 0.8 });
+
+    const markerById: Record<string, LeafletMarker> = {};
     for (const m of markers) {
-      markerByKey[markerKey(m.lat, m.lng)] = addMarker(L, map, m);
+      const marker = addMarker(L, map, m);
+      marker.on("popupopen", () => {
+        flyToMarker(marker);
+        announceSelection(m.id);
+      });
+      marker.on("popupclose", () => announceSelection(null));
+      markerById[m.id] = marker;
     }
 
-    document.addEventListener("fly-to-map", (e) => {
-      const { lat, lng } = e.detail;
-      map.flyTo([lat, lng], 15, { duration: 0.8 });
-      markerByKey[markerKey(lat, lng)]?.openPopup();
-    });
+    return (id: string) => {
+      const marker = markerById[id];
+      if (marker.isPopupOpen()) flyToMarker(marker);
+      else marker.openPopup();
+    };
   }
 
   function addMarker(L: typeof import("leaflet"), map: LeafletMap, m: MapMarker): LeafletMarker {
@@ -135,10 +163,6 @@ const { markers } = Astro.props;
     const el = marker.getElement();
     el?.setAttribute("role", "button");
     el?.setAttribute("aria-label", label);
-
-    marker.on("click", () => {
-      document.dispatchEvent(new CustomEvent("map-marker-selected", { detail: { lat: m.lat, lng: m.lng } }));
-    });
 
     return marker;
   }
